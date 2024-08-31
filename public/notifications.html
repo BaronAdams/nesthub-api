@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification test</title>
+</head>
+<body>
+    
+</body>
+<script>
+    if('Notification' in window){
+        if(Notification.permission === 'granted'){
+            notify()
+        }else{
+            Notification.requestPermission()
+                        .then((res)=>{
+                            if(res ==="granted") notify()
+                            else if(res ==="denied") console.log("Notification access denied")
+                            else if(res ==="default") console.log("Notification permission not given")
+                        })
+        }
+    }
+
+    function notify(){
+        new Notification('Inblog Recommandation',{
+            body:'An article recommanded for you ! Please, go and read the article',
+            icon :'../images/10.avif'
+        })
+    }
+</script>
+</html>
