@@ -1,6 +1,6 @@
-import User from "../models/user";
-import { registerUserDto, updateUserDto } from "../../../dto/auth";
-import { getAdminByEmail } from "./admin";
+import User from "../models/user.model";
+import { registerUserDto, updateUserDto } from "../../../dto/auth.dto";
+import { getAdminByEmail } from "./admin.service";
  
 export const getUserById = async (id:string) => await User.findByPk(id)
 export const getUserByEmail = async(email:string)=> await User.findOne({

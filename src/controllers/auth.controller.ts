@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt'
 import { Request, Response } from "express"
-import { createUser, getUserByEmail, getUserById } from "../db/mysql/services/user"
+import { createUser, getUserByEmail, getUserById } from "../db/mysql/services/user.service"
 import { createToken, refreshToken } from "../utils/jwt"
-import { RequestWithUserPayload } from "../middlewares/auth"
+import { RequestWithUserPayload } from "../middlewares/auth.middleware"
 import { validationResult, matchedData } from "express-validator"
-import { loginUserDto, registerUserDto } from "../dto/auth"
-import { createBlackListedToken } from "../db/mysql/services/blt"
+import { loginUserDto, registerUserDto } from "../dto/auth.dto"
+import { createBlackListedToken } from "../db/mysql/services/blt.service"
 
 export const isValidPassword = async (rawPassword:string, hash:string)=> {
     return await bcrypt.compare(rawPassword, hash)

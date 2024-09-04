@@ -2,12 +2,12 @@ import express, { NextFunction, Request, Response, Express } from 'express';
 import path from 'path'
 import http from 'http'
 import { Server } from 'socket.io';
-import User from './db/mysql/models/user'
-import authRouter from './routes/auth'
-import postRouter from './routes/post'
+import User from './db/mysql/models/user.model'
+import authRouter from './routes/auth.route'
+import postRouter from './routes/post.route'
 import upload from './middlewares/multer'
 import connection from './db/mysql/connection';
-import { isAdmin, isAuthenticated } from './middlewares/auth';
+import { isAdmin } from './middlewares/auth.middleware';
 
 const host = 'localhost'
 const port = 5000

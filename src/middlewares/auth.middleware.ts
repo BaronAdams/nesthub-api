@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { decryptToken, UserPayload } from '../utils/jwt'
-import { getUserById, updateUser } from '../db/mysql/services/user'
-import { isTokenBlackListed } from '../db/mysql/services/blt'
-import { getAdminByEmail } from '../db/mysql/services/admin'
-import Post from '../db/mysql/models/post'
+import { getUserById, updateUser } from '../db/mysql/services/user.service'
+import { isTokenBlackListed } from '../db/mysql/services/blt.service'
+import { getAdminByEmail } from '../db/mysql/services/admin.service'
+import Post from '../db/mysql/models/post.model'
 
 export interface RequestWithUserPayload extends Request{
     payload?: UserPayload

@@ -1,7 +1,7 @@
 import { Router } from "express"
-import { isAdmin, isAuthenticated, isPostOwner } from '../middlewares/auth'
-import { createPostController, deletePostController, getAllPostsController, getPostController, updatePostController } from "../controllers/post"
-import { createPostValidator, updatePostValidator } from "../validators/post"
+import { isAdmin, isAuthenticated, isPostOwner } from '../middlewares/auth.middleware'
+import { createPostController, deletePostController, getAllPostsController, getPostController, updatePostController } from "../controllers/post.controller"
+import { createPostValidator, updatePostValidator } from "../validators/post.validator"
 
 const router = Router()
 

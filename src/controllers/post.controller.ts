@@ -1,6 +1,6 @@
-import { createPost, deletePost, getAllPosts, getPostById, updatePost } from "../db/mysql/services/post"
-import { createPostDto, updatePostDto } from "../dto/post"
-import { RequestWithAdminPayload, RequestWithUserPayload } from "../middlewares/auth"
+import { createPost, deletePost, getAllPosts, getPostById, updatePost } from "../db/mysql/services/post.service"
+import { createPostDto, updatePostDto } from "../dto/post.dto"
+import { RequestWithAdminPayload, RequestWithUserPayload } from "../middlewares/auth.middleware"
 import { NextFunction, Request, Response } from "express"
 import { matchedData, validationResult, param } from "express-validator"
 
