@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { createId } from '@paralleldrive/cuid2';
-import sequelize from '../config';
+import { sequelize } from '../config';
 
 export interface ISubscriptionAttributes {
     id: string;
@@ -49,7 +49,6 @@ Subscription.init({
 }, {
     sequelize,
     modelName: 'Subscription',
-    timestamps: true,
 });
 
 export default Subscription;

@@ -8,6 +8,9 @@ export const getUserByEmail = async(email:string)=> await User.findOne({
         email
     }
 })
+export const getAllUsers = async()=> await User.findAll({
+    attributes : [ 'id', 'firstName', 'lastName', 'email', 'role', 'profilePic' ]
+})
 
 export const createUser = async(data: registerUserDto)=> {
     try {
@@ -25,5 +28,5 @@ export const createUser = async(data: registerUserDto)=> {
 export const updateUser = async(id:string, data: updateUserDto)=> {
     const user = await getUserById(id)
     if(!user) throw new Error("Le user n'existe pas")
-    user.update({...data})
+    user.update({...data, updatedAt: new Date()})
 }

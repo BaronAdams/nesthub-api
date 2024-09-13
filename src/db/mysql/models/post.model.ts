@@ -1,7 +1,7 @@
-import sequelize from '../config'
+import { sequelize } from '../config'
 import { Model, DataTypes, Optional } from 'sequelize';
 import { createId } from '@paralleldrive/cuid2';
-import Admin from './admin';
+import Admin from './admin.model';
 
 export interface IPostAttributes {
     id: string;
@@ -59,8 +59,10 @@ Post.init({
 }, {
     sequelize,
     modelName: 'Post',
-    timestamps: true,
     tableName: "posts"
 });
+
+Admin.hasMany(Post, { foreignKey: 'adminId' });
+Post.belongsTo(Admin, { foreignKey: 'adminId' });
 
 export default Post;

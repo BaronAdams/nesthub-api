@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { createId } from '@paralleldrive/cuid2';
-import sequelize from '../config';
-import Post from './post';
+import { sequelize } from '../config';
+import Post from './post.model';
 
 export interface ICommentAttributes {
     id: string;
@@ -53,8 +53,10 @@ Comment.init({
     }
 }, {
     sequelize,
-    modelName: 'comments',
-    timestamps: true,
+    modelName: 'comments'
 });
+
+Post.hasMany(Comment, { foreignKey: 'postId' });
+Comment.belongsTo(Post, { foreignKey: 'postId' });
 
 export default Comment;

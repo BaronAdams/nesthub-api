@@ -1,3 +1,6 @@
+import { error } from "console";
+import { response } from "express";
+
 const generateId = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
     let uniqueId = ''
@@ -10,4 +13,12 @@ const generateId = () => {
     return uniqueId
 }
 
-console.log(generateId())
+export const createError = (status: number, message?: string, errors:object | any[] = {})=>{
+    if(message?.length && Object.keys(errors).length) return response.status(status).json({error:true, message, errors})
+    if(message?.length && !Object.keys(errors).length) return response.status(status).json({error:true, message})
+    if(!message?.length && Object.keys(errors).length) return response.status(status).json({error:true, errors})
+    return response.status(500).json({error:true, messgae: "Une erreur est survenue lors de la création de l'erreur" })
+}
+
+export const createSuccess = (status: number, message: string) => response.status(status).json({success:true, message})
+

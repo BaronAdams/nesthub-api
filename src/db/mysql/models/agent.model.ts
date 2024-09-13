@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { createId } from '@paralleldrive/cuid2';
-import sequelize from '../config';
-import Agency from './agency';
+import { sequelize } from '../config';
+import Agency from './agency.model';
 
 export interface IAgentAttributes {
     id: string;
@@ -48,8 +48,10 @@ Agent.init({
 }, {
     sequelize,
     modelName: 'Agent',
-    timestamps: true,
     tableName:"agents"
 });
+
+Agency.hasMany(Agent, { foreignKey: 'agencyId' });
+Agent.belongsTo(Agency, { foreignKey: 'agencyId' });
 
 export default Agent;

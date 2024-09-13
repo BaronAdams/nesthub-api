@@ -1,5 +1,5 @@
-import { createPostDto, updatePostDto } from "@/dto/post";
-import Post from "../models/post";
+import { createPostDto, updatePostDto } from "@/dto/post.dto";
+import Post from "../models/post.model";
  
 export const getPostById = async (id:string) => {
     try {

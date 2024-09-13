@@ -6,18 +6,17 @@ import User from './db/mysql/models/user.model'
 import authRouter from './routes/auth.route'
 import postRouter from './routes/post.route'
 import upload from './middlewares/multer'
-import connection from './db/mysql/connection';
 import { isAdmin } from './middlewares/auth.middleware';
 
-const host = 'localhost'
-const port = 5000
-const allowedOrigins = ["http://localhost:3000","http://localhost:3001","http://localhost:8100","http://localhost:5173"]
+const host = process.env.NODE_ENV == "production" ? process.env.HOSTNAME : 'localhost'
+const port = 7000
+const allowedOrigins = process.env.NODE_ENV == "production" ? [] : ["http://localhost:3000","http://localhost:3001","http://127.0.0.1:5000","http://localhost:8100","http://localhost:5173"]
 const app : Express = express()
 const server = http.createServer(app)
 const io = new Server(server)
 
 // Appel de la fonction de connexion à la base de données
-connection()
+// connection()
 // Middleware pour utiliser publiquement les fichiers statiques du serveur API
 app.use('/images',express.static(path.join(__dirname,'images')))
 app.use(express.urlencoded({extended:true}))
@@ -28,7 +27,7 @@ app.use((req: Request, res: Response ,next: NextFunction)=> {
   if(origin && allowedOrigins.includes(origin)) res.header('Access-Control-Allow-Origin',origin)
   res.setHeader('Access-Control-Allow-Credentials','true')
   res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,DELETE')
-  res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization, x_csrf_token')
+  res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization')
   next()
 })
 
@@ -52,14 +51,14 @@ app.post('/api/upload', upload,(req: Request ,res: Response)=>{
 
 // Route d'API pour obtenir la liste de tous les utilisateurs (User) enregistrés dans notre base de données
 // Elle est accéssible uniquement par les admins
-app.get('/api/users', isAdmin, async (req: Request, res: Response) => {
-  try {
-      const users = await User.findAll()
-      return res.status(200).json(users)
-    } catch (error) {
-      console.log(error)
-    }
-})
+// app.get('/api/users', async (req: Request, res: Response) => {
+//   try {
+//       const users = await User.findAll()
+//       return res.status(200).json(users)
+//     } catch (error) {
+//       console.log(error)
+//     }
+// })
 
 // Fonction de connexion du socket de notre serveur
 io.on('connection', (socket) => {

@@ -1,4 +1,4 @@
-import Admin from "../models/admin";
+import Admin from "../models/admin.model";
 
 export const getAdminByEmail = async(email:string)=>{ 
     try {

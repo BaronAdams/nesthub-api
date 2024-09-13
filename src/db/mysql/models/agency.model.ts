@@ -1,8 +1,8 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { createId } from '@paralleldrive/cuid2';
-import sequelize from '../config';
-import Subscription from './subscription';
-import User from './user';
+import { sequelize } from '../config';
+import Subscription from './subscription.model';
+import User from './user.model';
 
 export interface IAgencyAttributes {
     id: string;
@@ -62,8 +62,13 @@ Agency.init({
 }, {
     sequelize,
     modelName: 'Agency',
-    timestamps: true,
     tableName:"agencies"
 });
+
+Subscription.hasMany(Agency, { foreignKey: 'subscriptionId' });
+Agency.belongsTo(Subscription, { foreignKey: 'subscriptionId' });
+
+User.hasMany(Agency, { foreignKey: 'ownerId' });
+Agency.belongsTo(User, { foreignKey: 'agencyId' });
 
 export default Agency;

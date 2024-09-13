@@ -1,4 +1,4 @@
-import BlackListedToken from "../models/blacklistedtoken"
+import BlackListedToken from "../models/blt.model"
 
 export const createBlackListedToken = async(token:string) =>{
     try {

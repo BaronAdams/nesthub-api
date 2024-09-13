@@ -14,23 +14,39 @@ export interface RequestWithAdminPayload extends RequestWithUserPayload{
     adminId?: string
 }
 
-export const isAuthenticated = (req: RequestWithUserPayload, res: Response, next: NextFunction) => {
+// export const canLogin = (req: RequestWithUserPayload, res: Response, next: NextFunction) => {
+//     const token = req.headers?.authorization?.split(" ")[1] ?? [][1]
+//     if(!token) next()
+//     isTokenBlackListed(token)
+//         .then((isBlackToken)=>{if(isBlackToken) next()})
+//     try {
+//        const decodedToken = decryptToken(token)
+//        if(!decodedToken) return res.status(401).json("Votre jéton est invalide")
+//        getUserById(decodedToken.userId)
+//         .then((user)=>{
+//             if(!user) return res.status(401).json("Vous n'êtes pas identifié") 
+//             req.payload = decodedToken        
+//             next()  
+//         })
+//         .catch((e)=> res.status(500).json("Une erreur est survenue"))
+//     }catch (error) {
+//         return res.status(500).json("Une erreur est survenue") 
+//     }       
+// }
+
+export const isAuthenticated = async (req: RequestWithUserPayload, res: Response, next: NextFunction) => {
     const [type, token] = req.headers?.authorization?.split(" ") ?? []
     if(type !== "Bearer") return res.status(403).json("Vous n'êtes pas autorisé")
     if(!token) return res.status(401).json("Vous n'avez pas de jeton JWT")
-    isTokenBlackListed(token)
-        .then((isBlackToken)=>{if(isBlackToken) return res.status(401).json("Vous n'êtes pas connecté")})
-        .catch((e)=> res.status(500).json("Une erreur est survenue"))
     try {
-       const decodedToken = decryptToken(token)
-       if(!decodedToken) return res.status(401).json("Votre jéton est invalide")
-       getUserById(decodedToken.userId)
-        .then((user)=>{
-            if(!user) return res.status(401).json("Vous n'êtes pas identifié") 
-            req.payload = decodedToken        
-            next()  
-        })
-        .catch((e)=> res.status(500).json("Une erreur est survenue"))
+        let isBlackToken = await isTokenBlackListed(token)
+        if(isBlackToken) return res.status(401).json("Vous n'êtes pas connecté")
+        const decodedToken = decryptToken(token)
+        if(!decodedToken) return res.status(401).json("Votre jéton est invalide")
+        let user = await getUserById(decodedToken.userId)
+        if(!user) return res.status(401).json("Vous n'êtes pas identifié") 
+        req.payload = decodedToken        
+        next()  
     }catch (error) {
         return res.status(500).json("Une erreur est survenue") 
     }       

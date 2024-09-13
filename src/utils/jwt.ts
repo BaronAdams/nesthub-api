@@ -43,5 +43,4 @@ export function refreshToken(decodedToken : UserPayload){
             return createToken({ userId: decodedToken.userId, role: decodedToken.role, email: decodedToken.email });
         }
     }
-
 }

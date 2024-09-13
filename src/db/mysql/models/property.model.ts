@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { createId } from '@paralleldrive/cuid2';
-import sequelize from '../config';
+import { sequelize } from '../config';
 import User from './user.model';
 import Agent from './agent.model';
 
@@ -97,6 +97,7 @@ Property.init({
     },
     sellerId: {
         type: DataTypes.STRING,
+        allowNull: true,
         references: {
             model: User,
             key: 'id',
@@ -135,8 +136,13 @@ Property.init({
     }
 }, {
     sequelize,
-    modelName: 'Property',
-    timestamps: true,
+    modelName: 'Property'
 });
+
+Agent.hasMany(Property, { foreignKey: 'agentId' });
+Property.belongsTo(Agent, { foreignKey: 'agentId' });
+
+User.hasMany(Property, { foreignKey: 'sellerId' });
+Property.belongsTo(User, { foreignKey: 'sellerId' });
 
 export default Property;
