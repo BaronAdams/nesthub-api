@@ -2,11 +2,11 @@ import express, { NextFunction, Request, Response, Express } from 'express';
 import path from 'path'
 import http from 'http'
 import { Server } from 'socket.io';
-import User from './db/mysql/models/user.model'
+// import User from './db/mysql/models/user.model'
 import authRouter from './routes/auth.route'
 import postRouter from './routes/post.route'
 import upload from './middlewares/multer'
-import { isAdmin } from './middlewares/auth.middleware';
+// import { isAdmin } from './middlewares/auth.middleware';
 
 const host = process.env.NODE_ENV == "production" ? process.env.HOSTNAME : 'localhost'
 const port = 7000

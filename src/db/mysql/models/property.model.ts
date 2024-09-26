@@ -3,18 +3,20 @@ import { createId } from '@paralleldrive/cuid2';
 import { sequelize } from '../config';
 import User from './user.model';
 import Agent from './agent.model';
+import Agency from './agency.model';
 
 export interface IPropertyAttributes {
     id: string;
     title: string;
     type: 'land' | 'villa' | 'banquet_hall' | 'building' | 'apartment' | 'duplex';
-    status: 'for_sale' | 'for_rent';
+    status: 'for_sale' | 'for_rent'| 'leased' | 'sold';
     place: string;
     furnished?: boolean;
     price: number;
     priceFrequency?: "hourly" | "daily" | "weekly" | "monthly" | "yearly" ;
     sellerId?: string;
     agentId: string;
+    agencyId: string;
     area: number;
     description?: string;
     rooms?:{
@@ -34,13 +36,14 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
     public id!: string;
     public title!: string;
     public type!: 'land' | 'villa' | 'banquet_hall' | 'building' | 'apartment' | 'duplex';
-    public status!: 'for_sale' | 'for_rent';
+    public status!: 'for_sale' | 'for_rent' | 'leased' | 'sold';
     public place!: string;
     public furnished?: boolean;
     public price!: number;
     public priceFrequency?: "hourly" | "daily" | "weekly" | "monthly" | "yearly" ;
     public sellerId?: string;
     public agentId!: string;
+    public agencyId!: string;
     public area!: number;
     public description?: string;
     public rooms?:{
@@ -69,7 +72,7 @@ Property.init({
         allowNull: false,
     },
     status: {
-        type: DataTypes.ENUM('for_sale', 'for_rent'),
+        type: DataTypes.ENUM('for_sale', 'for_rent','leased','sold'),
         allowNull: false,
     },
     place:{
@@ -78,7 +81,15 @@ Property.init({
     },
     furnished: {
         type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: true,
+        validate:{
+            isValidPriceFrequency(value: any){
+                if(this.status === "land" && value){
+                    throw new Error("Ce ne sont que des propriétés qui ne sont pas des terrains qui peuvent être meublées")
+                }
+            }
+        }
     },
     price: {
         type: DataTypes.FLOAT,
@@ -107,6 +118,14 @@ Property.init({
         type: DataTypes.STRING,
         references: {
             model: Agent,
+            key: 'id',
+        },
+        allowNull: false,
+    },
+    agencyId: {
+        type: DataTypes.STRING,
+        references: {
+            model: Agency,
             key: 'id',
         },
         allowNull: false,

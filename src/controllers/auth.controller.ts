@@ -6,8 +6,8 @@ import { RequestWithUserPayload } from "../middlewares/auth.middleware"
 import { validationResult, matchedData } from "express-validator"
 import { loginUserDto, registerUserDto } from "../dto/auth.dto"
 import { createBlackListedToken } from "../db/mysql/services/blt.service"
-import { IUserAttributes } from '@/db/mysql/models/user.model'
-import { createError, createSuccess } from '@/utils/helper'
+import { IUserAttributes } from '../db/mysql/models/user.model'
+import { createError, createSuccess } from '../utils/helper'
 
 const isValidPassword = async (rawPassword:string, hash:string)=> {
     return await bcrypt.compare(rawPassword, hash)
@@ -61,7 +61,7 @@ export const login = async (req:Request, res:Response, next: NextFunction) => {
             return res.status(500).json("Une erreur est survenue. Veuillez réessayer")
         }
     } 
-    return createError(400,"Erreur lors de la validation de données", result.array());
+    return createError(400,"Erreur lors de la validation de données", result.array());  
 }
 
 export const logout = async (req:Request, res:Response) => {
