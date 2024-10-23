@@ -3,10 +3,10 @@ import { NextFunction, Request, Response } from "express"
 import { createUser, getUserByEmail, getUserById, updateUser } from "../user/user.service"
 import { createToken, refreshToken, UserPayload } from "../../common/utils/jwt"
 import { validationResult, matchedData } from "express-validator"
-import { loginUserDto, registerUserDto } from "./auth.dto"
 import { createBlackListedToken } from "../blt/blt.service"
 import { createError, createSuccess } from '../../common/utils/helper'
 import { RegisterUserDto } from './dto/register-user.dto'
+import { LoginUserDto } from './dto/login-user.dto'
 
 const isValidPassword = async (rawPassword:string, hash:string)=> {
     return await bcrypt.compare(rawPassword, hash)
@@ -39,7 +39,7 @@ export const login = async (req:Request, res:Response, next: NextFunction) => {
     let result = validationResult(req)
     if(result.isEmpty()){
         try {
-            let data = matchedData(req) as loginUserDto
+            let data = matchedData(req) as LoginUserDto
             const user = await getUserByEmail(data.email)
             if(!user) return createError(401, "Utilisateur non trouvé")
             const valid = await isValidPassword(data.password, user.password)

@@ -1,6 +1,7 @@
 import User, { IUserAttributes } from "./user.model";
-import { registerUserDto, updateUserDto } from "../auth/auth.dto";
+import { updateUserDto } from "../auth/auth.dto";
 import { getAdminByEmail } from "../admin/admin.service";
+import { RegisterUserDto } from "../auth/dto/register-user.dto";
  
 export const getUserById = async (id:string): Promise<User | null > => await User.findByPk(id)
 export const getUserByEmail = async(email:string): Promise<User | null>=> await User.findOne({
@@ -12,7 +13,7 @@ export const getAllUsers = async() : Promise<User[]>=> await User.findAll({
     attributes : [ 'id', 'firstName', 'lastName', 'email', 'role', 'profilePic' ]
 })
 
-export const createUser = async(data: registerUserDto) : Promise<void> => {
+export const createUser = async(data: RegisterUserDto) : Promise<void> => {
     try {
         const newUser = await User.create(data)
         const isAdmin = await getAdminByEmail(data.email)
