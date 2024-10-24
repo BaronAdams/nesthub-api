@@ -1,4 +1,4 @@
-import { Table, Model, Column, DataType, PrimaryKey, Default, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Table, Model, Column, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, IsUUID } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import { Optional } from 'sequelize';
 import User from '../user/user.model'; // Assurez-vous d'importer le modèle `User`
@@ -22,13 +22,17 @@ export interface IReviewCreationAttributes extends Optional<IReviewAttributes, '
 })
 class Review extends Model<IReviewAttributes, IReviewCreationAttributes> implements IReviewAttributes {
   @PrimaryKey
-  @Default(() => createId()) // Génération de l'ID par défaut
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type:DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @ForeignKey(() => User) // Associe `userId` à la clé primaire de `User`
+  @IsUUID(4)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
   })
   public userId!: string;
@@ -48,10 +52,6 @@ class Review extends Model<IReviewAttributes, IReviewCreationAttributes> impleme
     allowNull: false,
   })
   public comment!: string;
-
-  // Les champs `createdAt` et `updatedAt` sont inclus automatiquement avec `timestamps: true`
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
 
   // Relation `belongsTo` vers le modèle `User`
   @BelongsTo(() => User, 'userId')

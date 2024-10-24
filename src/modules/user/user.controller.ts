@@ -1,4 +1,4 @@
-import { getAllUsers, getUserById } from "@/modules/user/user.service"
+import { getAllUsers, getUserById } from "./user.service"
 import { NextFunction, Request, Response } from "express"
 
 export const getAllUsersController = async (req: Request, res: Response , next: NextFunction ) =>{  

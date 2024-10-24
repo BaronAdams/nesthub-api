@@ -1,5 +1,4 @@
-import { Table, Model, Column, DataType, PrimaryKey, Default } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
+import { Table, Model, Column, DataType, PrimaryKey, IsUUID } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
 
 // Définition des interfaces pour les attributs et la création
@@ -21,8 +20,11 @@ export interface IContactMessageCreationAttributes extends Optional<IContactMess
 })
 class ContactMessage extends Model<IContactMessageAttributes, IContactMessageCreationAttributes> implements IContactMessageAttributes {
   @PrimaryKey
-  @Default(() => createId()) // Utilisation de la fonction `createId` pour l'ID par défaut
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type:DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @Column({

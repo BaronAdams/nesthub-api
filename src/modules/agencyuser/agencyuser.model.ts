@@ -10,6 +10,7 @@ import {
   CreatedAt,
   UpdatedAt,
   HasMany,
+  IsUUID,
 } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
 import { createId } from '@paralleldrive/cuid2';
@@ -43,16 +44,21 @@ interface IAgencyUserCreationAttributes extends Optional<IAgencyUserAttributes, 
 })
 class AgencyUser extends Model<IAgencyUserAttributes, IAgencyUserCreationAttributes> implements IAgencyUserAttributes {
   @PrimaryKey
-  @Default(() => createId()) // Générer l'id avec cuid
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type:DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @ForeignKey(() => User)
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column(DataType.UUID)
   public userId!: string;
 
   @ForeignKey(() => Agency)
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column(DataType.UUID)
   public agencyId!: string;
 
   @Column({
@@ -82,15 +88,6 @@ class AgencyUser extends Model<IAgencyUserAttributes, IAgencyUserCreationAttribu
     defaultValue: 'pending',
   })
   public status!: 'active' | 'inactive' | 'pending';
-
-  @CreatedAt
-  @Column(DataType.DATE)
-  public readonly createdAt!: Date;
-
-  @UpdatedAt
-  @Column(DataType.DATE)
-  public readonly updatedAt!: Date;
-
   // Définition des relations
   @BelongsTo(() => User, 'userId')
   user!: User;

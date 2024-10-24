@@ -1,4 +1,4 @@
-import { Model, Column, Table, ForeignKey, BelongsTo, DataType, HasMany } from 'sequelize-typescript';
+import { Model, Column, Table, ForeignKey, BelongsTo, DataType, HasMany, IsUUID, PrimaryKey } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import Admin from '../admin/admin.model';
 import Comment from '../comment/comment.model';
@@ -21,10 +21,11 @@ export interface IPostCreationAttributes extends Optional<IPostAttributes, 'id' 
     timestamps: true
 })
 class Post extends Model<IPostAttributes, IPostCreationAttributes> implements IPostAttributes {
+    @PrimaryKey
+    @IsUUID(4)
     @Column({
-        type: DataType.STRING,
-        defaultValue: () => createId(),
-        primaryKey: true,
+        type:DataType.UUID,
+        defaultValue: DataType.UUIDV4
     })
     public id!: string;
 
@@ -41,9 +42,10 @@ class Post extends Model<IPostAttributes, IPostCreationAttributes> implements IP
     public content!: string;
 
     @ForeignKey(() => Admin)
+    @IsUUID(4)
     @Column({
-        type: DataType.STRING,
-        allowNull: false,
+        type:DataType.UUID,
+        allowNull: false
     })
     public adminId!: string;
 
@@ -58,9 +60,6 @@ class Post extends Model<IPostAttributes, IPostCreationAttributes> implements IP
         allowNull: true,
     })
     public coverPic?: string;
-
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
 
     @BelongsTo(() => Admin, 'adminId')
     public adminAuthor!: Admin;

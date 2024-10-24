@@ -1,4 +1,4 @@
-import { Model, Table, Column, DataType, Default, PrimaryKey, CreatedAt, UpdatedAt, BelongsTo, ForeignKey } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, Default, PrimaryKey, CreatedAt, UpdatedAt, BelongsTo, ForeignKey, IsUUID } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import Agency from '../agency/agency.model';
 
@@ -22,8 +22,11 @@ export interface IInvitationCreationAttributes extends Omit<IInvitationAttribute
 })
 class Invitation extends Model<IInvitationAttributes, IInvitationCreationAttributes> implements IInvitationAttributes {
   @PrimaryKey
-  @Default(() => createId())
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type:DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @Column({
@@ -33,8 +36,9 @@ class Invitation extends Model<IInvitationAttributes, IInvitationCreationAttribu
   public email!: string;
 
   @ForeignKey(() => Agency)
+  @IsUUID(4)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
   })
   public agencyId!: string;
@@ -45,7 +49,6 @@ class Invitation extends Model<IInvitationAttributes, IInvitationCreationAttribu
   })
   public role!: 'agent' | 'admin';
 
-  @Default(() => createId())
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -64,9 +67,6 @@ class Invitation extends Model<IInvitationAttributes, IInvitationCreationAttribu
     allowNull: false,
   })
   public expiresAt!: Date;
-
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
 
   @BelongsTo(() => Agency, 'agencyId')
   public agency!: Agency;

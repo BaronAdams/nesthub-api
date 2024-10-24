@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, Default, AllowNull, ForeignKey, Validate, BelongsTo, Is } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, PrimaryKey, Default, AllowNull, ForeignKey, Validate, BelongsTo, Is, IsUUID } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import User from '../user/user.model';
 import AgencyUser from '../agencyuser/agencyuser.model';
@@ -39,8 +39,11 @@ export interface IPropertyCreationAttributes extends Optional<IPropertyAttribute
 })
 class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> implements IPropertyAttributes {
     @PrimaryKey
-    @Default(() => createId())
-    @Column(DataType.STRING)
+    @IsUUID(4)
+    @Column({
+      type:DataType.UUID,
+      defaultValue: DataType.UUIDV4
+    })
     public id!: string;
   
     @Column({
@@ -113,21 +116,30 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
             if(isAmemberofAgency) throw Error("L'agent ne peut pas vendre une propriété à son agence", );
           }
         })
-    @Column(DataType.STRING)
+    @IsUUID(4)
+    @Column(DataType.UUID)
     public sellerId?: string;
   
     @ForeignKey(() => AgencyUser)
+    @IsUUID(4)
     @Is("isAnAgent", async (value: string) => {
       const agent = await AgencyUser.findOne({ where: { id: value, role: 'agent' } });
       if (!agent) {
         throw Error("L'agentId doit correspondre à un utilisateur ayant le rôle 'agent'.", );
       }
     })
-    @Column(DataType.STRING)
+    @Column({
+      type:DataType.UUID,
+      allowNull: false
+    })  
     public agentId!: string;
   
     @ForeignKey(() => Agency)
-    @Column(DataType.STRING)
+    @IsUUID(4)
+    @Column({
+      type:DataType.UUID,
+      allowNull: false
+    })
     public agencyId!: string;
   
     @Column({

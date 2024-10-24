@@ -1,5 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, Default, CreatedAt, UpdatedAt, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, HasMany, IsUUID } from 'sequelize-typescript';
 import User from '../user/user.model';
 import { Optional } from 'sequelize';
 import AgencyUser from '../agencyuser/agencyuser.model';
@@ -25,8 +24,11 @@ export interface IAgencyCreationAttributes extends Optional<IAgencyAttributes, '
 })
 class Agency extends Model<IAgencyAttributes, IAgencyCreationAttributes> implements IAgencyAttributes {
   @PrimaryKey
-  @Default(() => createId())
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type:DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @Column({
@@ -57,15 +59,6 @@ class Agency extends Model<IAgencyAttributes, IAgencyCreationAttributes> impleme
     allowNull: false,
   })
   public subscriptionId!: string;
-
-  @CreatedAt
-  @Default(() => new Date())
-  @Column(DataType.DATE)
-  public readonly createdAt!: Date;
-
-  @UpdatedAt
-  @Column(DataType.DATE)
-  public readonly updatedAt!: Date;
 
   // Associations
   @BelongsTo(() => Subscription, { foreignKey: 'subscriptionId' })

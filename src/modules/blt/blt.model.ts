@@ -1,5 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, Default } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
+import { Table, Column, Model, DataType, PrimaryKey, IsUUID } from 'sequelize-typescript';
 
 export interface IBlackListedTokenAttributes {
   id: string;
@@ -14,8 +13,11 @@ export interface IBlackListedTokenCreationAttributes extends Partial<IBlackListe
 })
 class BlackListedToken extends Model<IBlackListedTokenAttributes, IBlackListedTokenCreationAttributes> implements IBlackListedTokenAttributes {
   @PrimaryKey
-  @Default(() => createId())
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type:DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @Column({

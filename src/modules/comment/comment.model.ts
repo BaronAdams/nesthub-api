@@ -1,5 +1,4 @@
-import { Table, Column, Model, ForeignKey, DataType, PrimaryKey, Default, BelongsTo } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
+import { Table, Column, Model, ForeignKey, DataType, PrimaryKey, BelongsTo, IsUUID } from 'sequelize-typescript';
 import Post from '../post/post.model';
 import User from '../user/user.model';
 
@@ -20,8 +19,11 @@ export interface ICommentCreationAttributes extends Partial<ICommentAttributes> 
 })
 class Comment extends Model<ICommentAttributes, ICommentCreationAttributes> implements ICommentAttributes {
   @PrimaryKey
-  @Default(() => createId())
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type:DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @Column({
@@ -31,8 +33,9 @@ class Comment extends Model<ICommentAttributes, ICommentCreationAttributes> impl
   public content!: string;
 
   @ForeignKey(() => Post)
+  @IsUUID(4)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
   })
   public postId!: string;
@@ -49,12 +52,6 @@ class Comment extends Model<ICommentAttributes, ICommentCreationAttributes> impl
 
   @BelongsTo(() => User,"authorId")
   public author!: User;
-
-  @Column(DataType.DATE)
-  public readonly createdAt!: Date;
-
-  @Column(DataType.DATE)
-  public readonly updatedAt!: Date;
 }
 
 export default Comment;

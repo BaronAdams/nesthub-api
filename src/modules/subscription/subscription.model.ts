@@ -8,6 +8,7 @@ import {
     CreatedAt,
     UpdatedAt,
     HasMany,
+    IsUUID,
   } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import { Optional } from 'sequelize';
@@ -33,39 +34,39 @@ export interface ISubscriptionAttributes {
   })
   class Subscription extends Model<ISubscriptionAttributes, ISubscriptionCreationAttributes> implements ISubscriptionAttributes {
     @PrimaryKey
-    @Default(() => createId())
-    @Column(DataType.STRING)
-    id!: string;
+    @IsUUID(4)
+    @Column({
+      type:DataType.UUID,
+      defaultValue: DataType.UUIDV4
+    })  
+    public id!: string;
   
     @Column({
       type: DataType.STRING,
       allowNull: false,
     })
-    name!: string;
+    public name!: string;
   
     @Column({
       type: DataType.FLOAT,
       allowNull: false,
     })
-    price!: number;
+    public price!: number;
   
     @Column({
       type: DataType.INTEGER,
       allowNull: false,
     })
-    agentLimit!: number;
+    public agentLimit!: number;
   
     @Column({
       type: DataType.INTEGER,
       allowNull: false,
     })
-    propertyLimit!: number;
-
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    public propertyLimit!: number;
 
     @HasMany(() => Agency, 'subscriptionId')
-    agencies!: Agency[];
+    public agencies!: Agency[];
   }
   
 export default Subscription;
