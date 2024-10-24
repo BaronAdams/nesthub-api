@@ -1,5 +1,4 @@
 import { JSONSchema } from 'json-schema-to-ts';
-import { AllowedSchema } from 'express-json-validator-middleware';
 
 // Schéma JSON standard pour la génération de types
 export const loginUserBodyJsonSchema = {
