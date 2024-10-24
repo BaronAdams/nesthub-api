@@ -1,9 +1,17 @@
-import { Validator } from 'express-json-validator-middleware';
-import { loginUserBodyJsonSchemaWithErrors } from '../schemas/login-user.schema';
+import { body } from "express-validator";
 
-const { validate } = new Validator({ strict:true });
-
-// Middleware de validation
-export const loginUserValidator = validate({
-    body: loginUserBodyJsonSchemaWithErrors,
-})
+export const loginUserValidator = [
+    body('email')
+      .isEmail()
+      .withMessage('L\'adresse email est invalide.')
+      .notEmpty()
+      .withMessage('L\'adresse email est requise.'),
+    
+    body('password')
+      .isLength({ min: 6 })
+      .withMessage('Le mot de passe doit contenir au moins 6 caractères.')
+      .matches(/^(?=.*[A-Z]{2,})(?=.*\d)/)
+      .withMessage('Le mot de passe doit contenir au moins 1 chiffre et 2 lettres majuscules.')
+      .notEmpty()
+      .withMessage('Le mot de passe est requis')
+]

@@ -64,15 +64,21 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
     @AllowNull
     @Column(DataType.STRING)
     public place!: string;
-  
-    @Default(false)
+
     @Is("isValidFurnished",(value: boolean) => {
       // @ts-ignore
       if (this.type === 'land' && value) {
         throw new Error("Ce ne sont que des propriétés qui ne sont pas des terrains qui peuvent être meublées");
       }
+      // @ts-ignore
+      if (this.type !== 'land' && !value) {
+        throw new Error("Vous devez spécifier si oui ou non les propriétés sont meublées");
+      }
     })
-    @Column(DataType.BOOLEAN)
+    @Column({
+      type:DataType.BOOLEAN,
+      allowNull: true
+    })
     public furnished?: boolean;
   
     @Column({
@@ -154,12 +160,7 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
       allowNull: false,
     })
     public images!: string[];
-    // Hook for validation before creation or update
-    // public async validate() {
-    //     await Property.validateAgentId(this.agentId);
-    //     await Property.validateSellerId(this.sellerId);
-    // }
-
+  
     // Définition des relations
     @BelongsTo(() => User, 'sellerId')
     seller!: User;

@@ -1,4 +1,4 @@
-import { Model, Column, Table, ForeignKey, CreatedAt, UpdatedAt, BelongsTo, DataType, HasMany } from 'sequelize-typescript';
+import { Model, Column, Table, ForeignKey, BelongsTo, DataType, HasMany } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import Admin from '../admin/admin.model';
 import Comment from '../comment/comment.model';
@@ -59,12 +59,7 @@ class Post extends Model<IPostAttributes, IPostCreationAttributes> implements IP
     })
     public coverPic?: string;
 
-    @CreatedAt
-    @Column
     public readonly createdAt!: Date;
-
-    @UpdatedAt
-    @Column
     public readonly updatedAt!: Date;
 
     @BelongsTo(() => Admin, 'adminId')

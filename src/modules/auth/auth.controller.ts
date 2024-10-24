@@ -18,21 +18,25 @@ const hashPassword = async (password:string)=> {
 }
 
 export const signup = async (req:Request, res:Response)=> {
-    try{
-        let data = req.body as RegisterUserDto
-        let existingUser = await getUserByEmail(data.email)
-        if(existingUser) return res.status(400).json({ error: true, message: "Email déja utilisé" })
-        try {
-            data.password = await hashPassword(data.password)
-            data.role = "both"
-            await createUser(data)
-            return res.status(201).json({ success:true, message:'Un nouvel utilistateur a été crée' })
+    let result = validationResult(req)
+    if(result.isEmpty()){
+        try{
+            let data = req.body as RegisterUserDto
+            let existingUser = await getUserByEmail(data.email)
+            if(existingUser) return res.status(400).json({ error: true, message: "Email déja utilisé" })
+            try {
+                data.password = await hashPassword(data.password)
+                data.role = "both"
+                await createUser(data)
+                return res.status(201).json({ success:true, message:'Un nouvel utilistateur a été crée' })
+            }catch(e){
+                return res.status(400).json({ error:true, message:"Une erreur est survenue. Veuillez réessayer" })
+            }
         }catch(e){
-            return res.status(400).json({ error:true, message:"Une erreur est survenue. Veuillez réessayer" })
+            return res.status(500).json({ error:true, message:"Une erreur est survenue. Veuillez réessayer" })
         }
-    }catch(e){
-        return res.status(500).json({ error:true, message:"Une erreur est survenue. Veuillez réessayer" })
     }
+    return res.status(400).json({ error:true, errors: result.array() });
 }
 
 export const login = async (req:Request, res:Response, next: NextFunction) => {

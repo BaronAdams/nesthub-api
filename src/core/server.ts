@@ -8,7 +8,6 @@ import userRouter from '../modules/user/user.route'
 import propertyRouter from '../modules/property/property.route'
 import upload from '../common/middlewares/multer'
 import { connect } from '../db/mysql/connection';
-import { ValidationError } from 'express-json-validator-middleware';
 
 const host = process.env.NODE_ENV == "production" ? process.env.HOSTNAME : 'localhost'
 const port = 7000
@@ -52,18 +51,6 @@ app.post('/api/upload', upload,(req: Request ,res: Response)=>{
     return res.status(200).json( `${req.protocol}://${req.get('host')}/images/blog3.webp`)
   }
 })
-
-app.use((error: ValidationError, req: Request, res: Response, next: NextFunction) => {
-  // Check the error is a validation error
-  if (error instanceof ValidationError) {
-    // Handle the error
-    res.status(400).send(error.validationErrors);
-    next();
-  } else {
-    // Pass error on if not a validation error
-    next(error);
-  }
-});
 
 // Fonction de connexion du socket de notre serveur
 io.on('connection', (socket) => {

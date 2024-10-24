@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, Default, HasMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, PrimaryKey, Default, HasMany, IsUUID } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import { Optional } from 'sequelize';
 import AgencyUser from '../agencyuser/agencyuser.model';
@@ -30,8 +30,11 @@ export interface IUserCreationAttributes extends Optional<IUserAttributes, 'id' 
 })
 class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
   @PrimaryKey
-  @Default(() => createId())
-  @Column(DataType.STRING)
+  @IsUUID(4)
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
   public id!: string;
 
   @Column({
