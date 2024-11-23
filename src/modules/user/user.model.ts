@@ -1,10 +1,10 @@
 import { Table, Column, Model, DataType, PrimaryKey, Default, HasMany, IsUUID } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
 import { Optional } from 'sequelize';
 import AgencyUser from '../agencyuser/agencyuser.model';
 import Property from '../property/property.model';
 import Comment from '../comment/comment.model';
 import Review from '../review/review.model';
+import { generateColor } from '../../common/utils/helper';
 
 // Définition des interfaces
 export interface IUserAttributes {
@@ -13,7 +13,10 @@ export interface IUserAttributes {
   lastName: string;
   email: string;
   password: string;
+  color?:string;
   role: 'buyer' | 'seller' | 'both' | 'agent' | 'agency_admin' | 'agency_owner' | 'admin';
+  isOnline?: boolean;
+  lastSeen?: Date;
   profilePic?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -63,6 +66,13 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
   public password!: string;
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    defaultValue : generateColor()
+  })
+  public color!: string;
+
+  @Column({
     type: DataType.ENUM('buyer', 'seller', 'both', 'agent', 'agency_owner','agency_admin', 'admin'),
     allowNull: false,
     defaultValue: 'both',
@@ -74,6 +84,18 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
     allowNull: true,
   })
   profilePic?: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  public lastSeen!: Date;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  public isOnline!: boolean;
 
   @Default(() => new Date())
   @Column({

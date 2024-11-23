@@ -36,7 +36,7 @@ export function refreshToken(decodedToken : UserPayload){
         const timeLeft = decodedToken.exp - currentTime;
         // Si le token est valide et qu'il reste moins de 10 jours (par exemple) avant l'expiration
         const thresholdInSeconds = 10 * 24 * 60 * 60; // 10 jours en secondes
-        if (timeLeft < thresholdInSeconds) {
+        if (0 < timeLeft && timeLeft < thresholdInSeconds) {
             // Générer un nouveau token avec une nouvelle durée de validité
             return createToken({ userId: decodedToken.userId, role: decodedToken.role, email: decodedToken.email });
         }

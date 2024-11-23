@@ -1,6 +1,3 @@
-import { error } from "console";
-import { response } from "express";
-
 const generateId = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
     let uniqueId = ''
@@ -14,11 +11,22 @@ const generateId = () => {
 }
 
 export const createError = (status: number, message?: string, errors:object | any[] = {})=>{
-    if(message?.length && Object.keys(errors).length) return response.status(status).json({error:true, message, errors})
-    if(message?.length && !Object.keys(errors).length) return response.status(status).json({error:true, message})
-    if(!message?.length && Object.keys(errors).length) return response.status(status).json({error:true, errors})
-    return response.status(500).json({error:true, messgae: "Une erreur est survenue lors de la création de l'erreur" })
+    if(message?.length && Object.keys(errors).length) return Response.json({error:true, message, errors}, {status})
+    if(message?.length && !Object.keys(errors).length) return Response.json({error:true, message}, {status})
+    if(!message?.length && Object.keys(errors).length) return Response.json({error:true, errors}, {status})
+    return Response.json({error:true, messgae: "Une erreur est survenue lors de la création de l'erreur" }, {status:500})
 }
 
-export const createSuccess = (status: number, message: string) => response.status(status).json({success:true, message})
+export const createSuccess = (status: number, message: string) => Response.json({success:true, message}, {status})
 
+export const generateColor = ()=>{
+    let profilePallete = [
+        "#3f6212", /**Vert */
+        "#3b82f6", /**Bleu */
+        "#ea580c", /**Orange */,
+        "#ef4444", /**Rouge */,
+        "#9333ea",
+        "#ec4899"
+    ]
+    return profilePallete[Math.floor(Math.random()*6)]
+}

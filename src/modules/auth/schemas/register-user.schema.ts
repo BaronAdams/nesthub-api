@@ -21,7 +21,7 @@ export const registerUserBodyJsonSchema = {
     password: {
       type: "string",
       minLength: 6,
-      pattern: "^(?=.*[A-Z]{2,})(?=.*\\d).+$",
+      pattern: "^(?=.*[A-Z]{1,})(?=.*\\d).+$",
     },
   },
   additionalProperties: false,

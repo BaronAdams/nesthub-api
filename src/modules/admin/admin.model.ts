@@ -1,5 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, Default, BeforeSave,IsEmail, Unique, HasMany, IsUUID } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
+import { Table, Column, Model, DataType, PrimaryKey, IsEmail, Unique, HasMany, IsUUID } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
 import Post from '../post/post.model';
   

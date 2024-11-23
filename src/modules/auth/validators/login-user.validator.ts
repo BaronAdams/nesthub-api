@@ -10,8 +10,8 @@ export const loginUserValidator = [
     body('password')
       .isLength({ min: 6 })
       .withMessage('Le mot de passe doit contenir au moins 6 caractères.')
-      .matches(/^(?=.*[A-Z]{2,})(?=.*\d)/)
-      .withMessage('Le mot de passe doit contenir au moins 1 chiffre et 2 lettres majuscules.')
+      .matches(/^(?=.*[A-Z]{1,})(?=.*\d)/)
+      .withMessage('Le mot de passe doit contenir au moins 1 chiffre et 1 lettre majuscule.')
       .notEmpty()
       .withMessage('Le mot de passe est requis')
 ]

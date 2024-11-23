@@ -20,10 +20,10 @@ export const registerUserValidator = [
       .withMessage('L\'adresse email est requise.'),
     
     body('password')
-      .isLength({ min: 6 })
-      .withMessage('Le mot de passe doit contenir au moins 6 caractères.')
-      .matches(/^(?=.*[A-Z]{2,})(?=.*\d)/)
-      .withMessage('Le mot de passe doit contenir au moins 1 chiffre et 2 lettres majuscules.'),
+    .matches(/^(?=.*[A-Z]{1,})(?=.*\d)/)
+    .withMessage('Le mot de passe doit contenir au moins 1 chiffre et 1 lettre majuscule.')
+    .isLength({ min: 6 })
+    .withMessage('Le mot de passe doit contenir au moins 6 caractères.')
   ];
   
 

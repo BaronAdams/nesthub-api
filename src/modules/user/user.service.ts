@@ -31,3 +31,13 @@ export const updateUser = async(id:string, data: updateUserDto)=> {
     if(!user) throw new Error("Le user n'existe pas")
     user.update({...data, updatedAt: new Date()})
 }
+
+export const updateOnlyUser = async(id:string, data: updateUserDto)=> {
+    const [affectedCounts, affectedRows] = await User.update(data,{
+        where : { id },
+        returning:true
+    })
+    if(affectedCounts === 0) throw new Error("Le user n'existe pas")
+    let { password, ...others } = affectedRows[0].dataValues
+    return others
+}
