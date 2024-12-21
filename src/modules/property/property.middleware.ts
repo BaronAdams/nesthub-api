@@ -8,7 +8,8 @@ export const isPropertyOwner = (req: Request, res: Response, next: NextFunction)
         const adminId = req.headers["session-admin-id"]
         let findedPost = await Property.findOne({
             where:{
-                adminId,
+                // @ts-ignore
+                adminId: adminId,
                 id: postId
             }
         })

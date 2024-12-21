@@ -1,13 +1,13 @@
 import { createProperty, updateProperty, getProperties,searchProperties, getPropertyById } from "./property.service"
 import { NextFunction, Request, Response } from "express"
 import { matchedData, validationResult, param } from "express-validator"
-import { createPropertyDto } from "./property.dto"
+import { CreatePropertyDto } from "./dto/create-property.dto"
 
 
 export const createPropertyController = async (req: Request, res: Response , next: NextFunction ) =>{  
     let result = validationResult(req)
     if(result.isEmpty()){
-        let data = matchedData(req) as createPropertyDto
+        let data = matchedData(req) as CreatePropertyDto
         try {
             await createProperty(data)
             return res.status(201).json('Un nouvel post a été crée')

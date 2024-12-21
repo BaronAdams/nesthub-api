@@ -6,6 +6,13 @@ import Comment from '../comment/comment.model';
 import Review from '../review/review.model';
 import { generateColor } from '../../common/utils/helper';
 
+type LangLevel = "Débutant" | "Courant" | "Expert";
+type Preferences = {
+  types: string[],
+  minBudget: number,
+  maxBudget: number
+}
+
 // Définition des interfaces
 export interface IUserAttributes {
   id: string;
@@ -13,19 +20,26 @@ export interface IUserAttributes {
   lastName: string;
   email: string;
   password: string;
+  phone: string;
+  languages:{
+    french : LangLevel,
+    english : LangLevel,
+  };
+  location: string;
+  birthday: Date;
   color?:string;
   role: 'buyer' | 'seller' | 'both' | 'agent' | 'agency_admin' | 'agency_owner' | 'admin';
   isOnline?: boolean;
   lastSeen?: Date;
   profilePic?: string;
+  preferences?: Preferences;
   createdAt?: Date;
   updatedAt?: Date;
   lastLoginDate?: Date;
   lastSessionDate?: Date;
 }
 
-export interface IUserCreationAttributes extends Optional<IUserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'lastLoginDate' | 'lastSessionDate'> {}
-
+export interface IUserCreationAttributes extends Optional<IUserAttributes, 'id' | 'birthday' | 'languages' | 'createdAt' | 'updatedAt' | 'lastLoginDate' | 'lastSessionDate'> {}
 // Définition du modèle User avec sequelize-typescript
 @Table({
   tableName: 'users',
@@ -67,6 +81,33 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
 
   @Column({
     type: DataType.STRING,
+    allowNull: false,
+  })
+  public phone!: string;
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true
+  })
+  public languages!:{
+    french : "Débutant" | "Courant" | "Expert",
+    english : "Débutant" | "Courant" | "Expert",
+  };
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  public location!: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  public birthday!: Date;
+
+  @Column({
+    type: DataType.STRING,
     allowNull: true,
     defaultValue : generateColor()
   })
@@ -83,7 +124,7 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
     type: DataType.STRING,
     allowNull: true,
   })
-  profilePic?: string;
+  public profilePic?: string;
 
   @Column({
     type: DataType.DATE,

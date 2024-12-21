@@ -1,13 +1,14 @@
 import { createPost, deletePost, getAllPosts, getPostById, updatePost } from "./post.service"
-import { createPostDto, updatePostDto } from "./post.dto"
 import { NextFunction, Request, Response } from "express"
 import { matchedData, validationResult, param } from "express-validator"
+import { CreatePostDto } from "./dto/create-post.dto"
+import { UpdatePostDto } from "./dto/update-post.dto"
 
 
 export const createPostController = async (req: Request, res: Response , next: NextFunction ) =>{  
     let result = validationResult(req)
     if(result.isEmpty()){
-        let data = matchedData(req) as createPostDto
+        let data = matchedData(req) as CreatePostDto
         let sessionadminId = req.headers["session-admin-id"] as string
         if(sessionadminId) data.adminId = sessionadminId
         try {
@@ -66,7 +67,7 @@ export const getPostController = async (req: Request, res: Response , next: Next
 export const updatePostController = async (req: Request, res: Response , next: NextFunction ) =>{
     let result = validationResult(req)
     if(result.isEmpty()){
-        let data = matchedData(req) as updatePostDto
+        let data = matchedData(req) as UpdatePostDto
         await updatePost(req.params.id, data)
         return res.status(201).json("Post modifié avec succès")
     }     

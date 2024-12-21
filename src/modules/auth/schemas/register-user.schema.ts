@@ -3,7 +3,7 @@ import { JSONSchema } from 'json-schema-to-ts';
 // Schéma JSON standard pour la génération de types
 export const registerUserBodyJsonSchema = {
   type: "object",
-  required: ["firstName", "lastName", "email", "password"],
+  required: ["firstName", "lastName", "email", "password","location","phone"],
   properties: {
     firstName: {
       type: "string",
@@ -23,7 +23,17 @@ export const registerUserBodyJsonSchema = {
       minLength: 6,
       pattern: "^(?=.*[A-Z]{1,})(?=.*\\d).+$",
     },
-  },
-  additionalProperties: false,
+    location:{
+      type: "string",
+      enum: ['Yaoundé', 'Douala', 'Bafoussam', 'Buéa', 'Bamenda', 'Ebolowa','Bertoua','Ngaoundéré','Garoua','Maroua'],
+    },
+    phone:{
+      type:"string",
+      minLength: 9,
+      maxLength: 9,
+      pattern:"/[^0-9]/g"
+    },
+    additionalProperties: false,
+  }
 } as const satisfies JSONSchema;
 

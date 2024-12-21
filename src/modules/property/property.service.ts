@@ -1,9 +1,9 @@
-import { createPropertyDto } from './property.dto';
+import { CreatePropertyDto } from './dto/create-property.dto';
 import Property from './property.model';
 import { Op } from 'sequelize';
 
 // Fonction pour créer une propriété
-export const createProperty = async (propertyData: createPropertyDto) => {
+export const createProperty = async (propertyData: CreatePropertyDto) => {
   try {
     const property = await Property.create(propertyData);
     return property;
@@ -56,10 +56,10 @@ export const deleteProperty = async (id: string) => {
 };
 
 // Rechercher des propriétés par type
-export const searchPropertiesByType = async (type: string, page?:number) => {
+export const searchPropertiesByType = async (property_type: string, page?:number) => {
   try {
     const properties = await Property.findAll({
-      where: { type }
+      where: { property_type }
     });
     return properties;
   } catch (error) {
@@ -131,7 +131,7 @@ export const searchPropertiesByStatus = async (status: string, page?:number) => 
 export const searchProperties = async (filters: any, page?:number) => {
   try {
     const conditions: any = {};
-    if (filters.type) conditions.type = filters.type;
+    if (filters.property_type) conditions.property_type = filters.property_type;
     if (filters.status) conditions.status = filters.status;
     if (filters.location) conditions.location = { [Op.like]: `%${filters.location}%` };
     if (filters.minPrice && filters.maxPrice) {

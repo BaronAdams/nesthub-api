@@ -5,8 +5,8 @@ import { createPropertyController, getPropertyController, getPropertiesControlle
 
 const router = Router()
 
-router.post('/create',createPropertyValidator,createPropertyController)
-router.get('/:id',getPropertyController)
 router.get('/',getPropertiesController)
+router.get('/:id',getPropertyController)
+router.post('/create',createPropertyValidator,createPropertyController)
 
 export default router

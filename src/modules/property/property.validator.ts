@@ -21,6 +21,8 @@ export interface IPropertyAttributes {
         bathrooms: number
     };
     images: string[];
+    likedBy?: string[];
+    savedBy?: string[];
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -122,6 +124,16 @@ export const createPropertyValidator = [
     }),
 
     body('images')
+    .isArray({min:4, max:10})
+    .withMessage("Vous devez charger au moins 4 photos et au plus 10"),
+
+    body('likedBy')
+    .optional({checkFalsy: true})
+    .isArray()
+    .withMessage("Vous devez charger au moins 4 photos et au plus 10"),
+
+    body('savedBy')
+    .optional({checkFalsy: true})
     .isArray({min:4, max:10})
     .withMessage("Vous devez charger au moins 4 photos et au plus 10")
 ];

@@ -1,4 +1,5 @@
-import { createPostDto, updatePostDto } from "./post.dto";
+import { CreatePostDto } from "./dto/create-post.dto";
+import { UpdatePostDto } from "./dto/update-post.dto";
 import Post from "./post.model";
  
 export const getPostById = async (id:string) => {
@@ -19,7 +20,7 @@ export const getAllPosts = async () => {
     }
 }
 
-export const createPost = async(data: createPostDto)=>{
+export const createPost = async(data: CreatePostDto)=>{
     try {
         await Post.create(data)
     } catch (error) {
@@ -35,7 +36,7 @@ export const deletePost = async(id: string)=> {
     }
 }
 
-export const updatePost = async(id:string, data: updatePostDto)=> {
+export const updatePost = async(id:string, data: UpdatePostDto)=> {
     const post = await getPostById(id)
     if(!post) throw new Error("Le post n'existe pas")
     post.update({...data})

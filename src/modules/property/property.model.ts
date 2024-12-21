@@ -9,7 +9,7 @@ import Agency from '../agency/agency.model';
 export interface IPropertyAttributes {
     id: string;
     title: string;
-    type: 'land' | 'villa' | 'banquet_hall' | 'building' | 'apartment' | 'duplex';
+    property_type: 'land' | 'villa' | 'banquet_hall' | 'building' | 'apartment' | 'duplex';
     status: 'for_sale' | 'for_rent' | 'leased' | 'sold';
     place: string;
     furnished?: boolean;
@@ -27,11 +27,13 @@ export interface IPropertyAttributes {
       bathrooms: number;
     };
     images: string[];
+    likedBy: string[];
+    savedBy: string[];
     createdAt?: Date;
     updatedAt?: Date;
   }
   
-export interface IPropertyCreationAttributes extends Optional<IPropertyAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+export interface IPropertyCreationAttributes extends Optional<IPropertyAttributes, 'id' | 'createdAt' | 'updatedAt' | 'likedBy' | 'savedBy'> {}
   
 @Table({
   tableName: 'properties',
@@ -56,7 +58,7 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
       type: DataType.ENUM('land', 'villa', 'banquet_hall', 'building', 'apartment', 'duplex'),
       allowNull: false,
     })
-    public type!: 'land' | 'villa' | 'banquet_hall' | 'building' | 'apartment' | 'duplex';
+    public property_type!: 'land' | 'villa' | 'banquet_hall' | 'building' | 'apartment' | 'duplex';
   
     @Column({
       type: DataType.ENUM('for_sale', 'for_rent', 'leased', 'sold'),
@@ -172,6 +174,20 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
       allowNull: false,
     })
     public images!: string[];
+
+    @Column({
+      type: DataType.ARRAY(DataType.STRING),
+      allowNull: true,
+      defaultValue:[]
+    })
+    public likedBy!: string[];
+
+    @Column({
+      type: DataType.ARRAY(DataType.STRING),
+      allowNull: true,
+      defaultValue:[]
+    })
+    public savedBy!: string[];
   
     // Définition des relations
     @BelongsTo(() => User, 'sellerId')

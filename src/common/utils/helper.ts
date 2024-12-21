@@ -1,3 +1,5 @@
+import crypto from 'crypto'
+
 const generateId = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
     let uniqueId = ''
@@ -28,5 +30,5 @@ export const generateColor = ()=>{
         "#9333ea",
         "#ec4899"
     ]
-    return profilePallete[Math.floor(Math.random()*6)]
+    return profilePallete[crypto.randomInt(0, profilePallete.length - 1)]
 }
