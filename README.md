@@ -21,6 +21,7 @@ Ce repo git est le backend de l'application Nesthub. Cette application propose d
 - **json-schema-to-ts** : Génération de DTOs (Data Transfer Objects) à partir de schémas JSON pour garantir une validation stricte des données.
 
 ### Authentification
+- **Bcrypt** : Pour le hachage des mots de passe, garantissant leur sécurité dans la base de données.
 - **JWT (JSON Web Tokens)** : Gestion des tokens pour sécuriser l'authentification et les autorisations.
 
 ### Fonctionnalités en temps réel
@@ -29,8 +30,6 @@ Ce repo git est le backend de l'application Nesthub. Cette application propose d
 ### Paiements
 - **MeSomb** : Plateforme d'intégration pour les paiements mobiles via Orange Money et MTN Mobile Money, adaptée aux transactions courantes dans la région.
 
-### Sécurité
-- **Bcrypt** : Pour le hachage des mots de passe, garantissant leur sécurité dans la base de données.
 
 ## Fonctionnalités communes aux deux versions
 
@@ -80,35 +79,15 @@ Cette version inclut toutes les fonctionnalités de la Version 1 avec des améli
 - Les utilisateurs peuvent rechercher des agences et consulter les propriétés associées.
 - Les agences peuvent inviter de nouveaux agents via des liens d'invitation.
 
-## Modèles de données principaux
-
-### Modèle User
-- **id** (UUID)
-- **nom**, **email**, **mot de passe**
-- **rôle** : acheteur, vendeur, acheteur-vendeur
-- **forfaits souscrits**
-- **propriétés likées/enregistrées** (tableaux d'IDs)
-
-### Modèle Property
-- **id** (UUID)
-- **titre**, **description**, **prix**, **type** (location/vente)
-- **superficie**, **pièces** (chambres, cuisines, salles de bain)
-- **créé par** : vendeur ou agence
-
-### Modèle Agency (Version 2 uniquement)
-- **id** (UUID)
-- **nom**, **propriétaire** (utilisateur créateur de l'agence)
-- **agents** (liste d'utilisateurs avec permissions)
-- **forfaits souscrits**
-
 ## API REST
 Le backend expose une API REST structurée, incluant les routes suivantes :
 
 ### Routes utilisateurs
-- `POST /users/register` : Inscription d'un utilisateur
-- `POST /users/login` : Connexion
-- `GET /users/me` : Récupération des informations utilisateur
-- `PUT /users/update` : Mise à jour du profil
+- `POST /api/auth/register` : Inscription d'un utilisateur
+- `POST /api/auth/login` : Connexion d'un utilisateur
+- `GET /api/auth/me` : Récupération des informations utilisateur
+- `PUT /api/auth/me` : Mise à jour du profil
+- `GET /api/auth/logout` : Déconnexion d'un utilisateur
 
 ### Routes propriétés
 - `POST /properties` : Création d'une propriété
