@@ -12,7 +12,6 @@ import {
   } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import { Optional } from 'sequelize';
-import Agency from '../agency/agency.model';
   
 // Interfaces de type pour Subscription
 export interface ISubscriptionAttributes {
@@ -64,9 +63,6 @@ export interface ISubscriptionAttributes {
       allowNull: false,
     })
     public propertyLimit!: number;
-
-    @HasMany(() => Agency, 'subscriptionId')
-    public agencies!: Agency[];
   }
   
 export default Subscription;

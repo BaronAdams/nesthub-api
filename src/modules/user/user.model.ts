@@ -1,6 +1,5 @@
 import { Table, Column, Model, DataType, PrimaryKey, Default, HasMany, IsUUID } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
-import AgencyUser from '../agencyuser/agencyuser.model';
 import Property from '../property/property.model';
 import Comment from '../comment/comment.model';
 import Review from '../review/review.model';
@@ -161,9 +160,6 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
     allowNull: true,
   })
   public lastSessionDate!: Date;
-
-  @HasMany(() => AgencyUser, 'userId')
-  agencyUsers!: AgencyUser[];
 
   @HasMany(() => Property, 'sellerId')
   properties!: Property[];

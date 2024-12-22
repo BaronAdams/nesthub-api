@@ -1,9 +1,8 @@
 import { Table, Column, Model, DataType, PrimaryKey, Default, AllowNull, ForeignKey, Validate, BelongsTo, Is, IsUUID } from 'sequelize-typescript';
 import { createId } from '@paralleldrive/cuid2';
 import User from '../user/user.model';
-import AgencyUser from '../agencyuser/agencyuser.model';
 import { Op, Optional } from 'sequelize';
-import Agency from '../agency/agency.model';
+
   
 // Interface de type pour Property
 export interface IPropertyAttributes {
@@ -16,8 +15,6 @@ export interface IPropertyAttributes {
     price: number;
     priceFrequency?: "hourly" | "daily" | "weekly" | "monthly" | "yearly";
     sellerId?: string;
-    agentId: string;
-    agencyId: string;
     area: number;
     description?: string;
     rooms?: {
@@ -122,28 +119,6 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
     @Column(DataType.UUID)
     public sellerId?: string;
   
-    @ForeignKey(() => AgencyUser)
-    @IsUUID(4)
-    @Is("isAnAgent", async (value: string) => {
-      const agent = await AgencyUser.findOne({ where: { id: value, role: 'agent' } });
-      if (!agent) {
-        throw Error("L'agentId doit correspondre à un utilisateur ayant le rôle 'agent'.", );
-      }
-    })
-    @Column({
-      type:DataType.UUID,
-      allowNull: false
-    })  
-    public agentId!: string;
-  
-    @ForeignKey(() => Agency)
-    @IsUUID(4)
-    @Column({
-      type:DataType.UUID,
-      allowNull: false
-    })
-    public agencyId!: string;
-  
     @Column({
       type: DataType.FLOAT,
       allowNull: false,
@@ -192,12 +167,6 @@ class Property extends Model<IPropertyAttributes, IPropertyCreationAttributes> i
     // Définition des relations
     @BelongsTo(() => User, 'sellerId')
     seller!: User;
-
-    @BelongsTo(() => Agency, 'agencyId')
-    agency!: Agency;
-
-    @BelongsTo(() => AgencyUser, 'agentId')
-    public agent!: AgencyUser;
 
 }
 
