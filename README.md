@@ -1,6 +1,36 @@
-# Backend de l'application Immobilière Nesthub
+# Backend de l'application Nesthub
 
-Ce backend constitue le cœur de l'application immobilière. Il est développé avec **Express** et **TypeScript**, utilise **Sequelize** comme ORM, et assure la validation des données grâce à **express-validator**. Cette application propose deux versions distinctes, chacune ayant des fonctionnalités adaptées à différents besoins des utilisateurs.
+Ce repo git est le backend de l'application Nesthub. Cette application propose deux versions distinctes, chacune ayant des fonctionnalités adaptées à différents besoins des utilisateurs.
+
+## Technologies utilisés
+### Langage et Frameworks
+- **Node.js** : Environnement d'exécution JavaScript.
+- **Express.js** : Framework web pour construire l'API de manière rapide et efficace.
+- **TypeScript** : Superset de JavaScript qui ajoute des types statiques, permettant une meilleure robustesse et maintenabilité.
+
+### Bases de données (au choix)
+- **PostgreSQL** : Base de données relationnelle robuste et performante.
+  - **Sequelize** : ORM (Object Relational Mapper) pour interagir avec PostgreSQL.
+  - **Sequelize-TypeScript** : Extension pour intégrer TypeScript avec Sequelize.
+
+- **AWS DynamoDB** : Base de données NoSQL entièrement gérée par Amazon Web Services, idéale pour des applications nécessitant une haute disponibilité.
+  - **Dynamoose** : ORM simplifiant les interactions avec DynamoDB.
+
+### Validation
+- **Express-validator** : Validation des corps de requête pour assurer l'intégrité des données en entrée.
+- **json-schema-to-ts** : Génération de DTOs (Data Transfer Objects) à partir de schémas JSON pour garantir une validation stricte des données.
+
+### Authentification
+- **JWT (JSON Web Tokens)** : Gestion des tokens pour sécuriser l'authentification et les autorisations.
+
+### Fonctionnalités en temps réel
+- **Socket.IO** : Bibliothèque pour gérer les données en temps réel, utilisée pour les notifications et les chats de messagerie.
+
+### Paiements
+- **MeSomb** : Plateforme d'intégration pour les paiements mobiles via Orange Money et MTN Mobile Money, adaptée aux transactions courantes dans la région.
+
+### Sécurité
+- **Bcrypt** : Pour le hachage des mots de passe, garantissant leur sécurité dans la base de données.
 
 ## Fonctionnalités communes aux deux versions
 
@@ -102,8 +132,3 @@ Le backend expose une API REST structurée, incluant les routes suivantes :
 2. Installez les dépendances : `npm install`
 3. Configurez les variables d'environnement (base de données, JWT, etc.).
 4. Lancez le serveur en mode développement : `npm run dev`.
-5. La documentation de l'API est disponible à `/api-docs` si Swagger est configuré.
-
-## Conclusion
-Ce backend offre une solution robuste et évolutive pour la gestion d'une application immobilière. Les deux versions permettent une flexibilité d'utilisation selon les besoins des utilisateurs, avec un accent particulier sur la sécurité et les performances.
-
