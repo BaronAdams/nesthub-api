@@ -9,7 +9,7 @@ export const updatePropertyValidator = [
     .isLength({ min: 1 })
     .withMessage('Le titre est requis.'),
   
-  body('type')
+  body('property_type')
     .optional({ checkFalsy:true })
     .isIn(['land', 'villa', 'banquet_hall', 'building', 'apartment', 'duplex'])
     .withMessage("Le type de propriété doit être l'un des suivants : land, villa, banquet_hall, building, apartment, duplex."),
@@ -19,10 +19,24 @@ export const updatePropertyValidator = [
     .isIn(['for_sale', 'for_rent', 'leased', 'sold'])
     .withMessage("Le statut doit être l'un des suivants : for_sale, for_rent, leased, sold."),
   
-  body('place')
+    body('city')
+    .optional({ checkFalsy:true })
+    .isIn(["Bafoussam",
+      "Bamenda",
+      "Bertoua",
+      "Buéa",
+      "Douala",
+      "Ebolowa",
+      "Garoua",
+      "Maroua",
+      "Ngaoundéré",
+      "Yaoundé"])
+    .withMessage("Le lieu de la propriété doit être l'une des villes du Cameroun"),
+
+  body('hood')
     .optional({ checkFalsy:true })
     .isString()
-    .withMessage('Le lieu doit être une chaîne de caractères.'),
+    .withMessage('Vous devez précisez le quartier où réside votre propriété'),
   
   body('furnished')
     .optional({ checkFalsy:true })
@@ -52,11 +66,6 @@ export const updatePropertyValidator = [
     .isString()
     .withMessage("L'identifiant du vendeur doit être une chaîne de caractères."),
   
-  body('agentId')
-    .optional({ checkFalsy:true })
-    .isString()
-    .withMessage("L'identifiant de l'agent est requis et doit être une chaîne de caractères."),
-  
   body('area')
     .optional({ checkFalsy:true })
     .isNumeric()
@@ -74,14 +83,14 @@ export const updatePropertyValidator = [
     .isObject()
     .withMessage('Les détails des pièces doivent être un objet.')
     .custom((rooms, { req }) => {
-      if (req.body.type !== 'land' && !rooms) {
+      if (req.body.property_type !== 'land' && !rooms) {
         throw new Error('Les détails des pièces sont requis pour les propriétés qui ne sont pas des terrains.');
       }
       return true;
     }),
   
   body('images')
-    .isArray({ min: 4 })
+    .isArray({ min: 4, max:10 })
     .withMessage('Au moins quatres images sont requises.')
     .custom((images) => {
       if (!images.every((img: string) => typeof img === 'string')) {

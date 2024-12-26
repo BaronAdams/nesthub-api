@@ -7,9 +7,7 @@ export const createPropertyValidator = [
     .isLength({ min: 1 })
     .withMessage('Le titre est requis.'),
 
-  body('type')
-    .isString()
-    .withMessage('Le type de propriété doit être une chaîne de caractères.')
+  body('property_type')
     .isIn(['land', 'villa', 'banquet_hall', 'building', 'apartment', 'duplex'])
     .withMessage("Le type de propriété doit être l'un des suivants : land, villa, banquet_hall, building, apartment, duplex."),
 
@@ -19,21 +17,37 @@ export const createPropertyValidator = [
     .isIn(['for_sale', 'for_rent', 'leased', 'sold'])
     .withMessage("Le statut doit être l'un des suivants : for_sale, for_rent, leased, sold."),
 
-  body('place')
-    .if(body('type').not().equals('land'))
+  body('city')
+    .isIn(["Bafoussam",
+      "Bamenda",
+      "Bertoua",
+      "Buéa",
+      "Douala",
+      "Ebolowa",
+      "Garoua",
+      "Maroua",
+      "Ngaoundéré",
+      "Yaoundé"])
+    .withMessage("Le lieu de la propriété doit être l'une des villes du Cameroun")
+    .notEmpty()
+    .withMessage('La ville où se trouve la propriété doit être specifiée'),
+
+  body('hood')
     .isString()
-    .withMessage('Le lieu doit être une chaîne de caractères lorsque le type de propriété n\'est pas un terrain.'),
+    .withMessage('Vous devez précisez le quartier où réside votre propriété')
+    .notEmpty()
+    .withMessage('Le quartier où se trouve la propriété doit être specifiée'),
 
   body('furnished')
-    .if(body('type').not().equals('land'))
+    .if(body('property_type').not().equals('land'))
     .isBoolean()
-    .withMessage('Le champ "furnished" doit être de type booléen lorsque le type de propriété n\'est pas un terrain.'),
+    .withMessage('Le champ "furnished" doit préciser si oui ou non la propriété est meublée'),
 
   body('price')
     .isNumeric()
     .withMessage('Le prix doit être un nombre.')
     .notEmpty()
-    .withMessage('Le prix est requis.'),
+    .withMessage('Le prix est requis'),
 
   body('priceFrequency')
     .if(body('status').equals('for_rent'))
@@ -44,28 +58,10 @@ export const createPropertyValidator = [
     .notEmpty()
     .withMessage('La fréquence de prix est requise pour les propriétés à louer.'),
 
-  body('sellerId')
-    .optional({checkFalsy: true})
-    .isString()
-    .withMessage("L'identifiant du vendeur doit être une chaîne de caractères."),
-
-  body('agentId')
-    .isString()
-    .withMessage("L'identifiant de l'agent est requis et doit être une chaîne de caractères.")
-    .notEmpty()
-    .withMessage("L'ID de l'agent chargé de vendre la propriété doit être specifié"),
-
-  body('agencyId')
-    .isString()
-    .withMessage("L'identifiant de l'agence est requis et doit être une chaîne de caractères.")
-    .notEmpty()
-    .withMessage("L'ID de l'agence chargée de la propriété doit être specifié."),
-
   body('area')
+    .optional({checkFalsy:true})
     .isNumeric()
-    .withMessage('La superficie doit être un nombre.')
-    .notEmpty()
-    .withMessage('La superficie est requise.'),
+    .withMessage('La superficie doit être un nombre.'),
 
   body('description')
     .optional({checkFalsy:true})
@@ -73,28 +69,34 @@ export const createPropertyValidator = [
     .withMessage('La description doit être une chaîne de caractères.'),
 
   body('rooms')
-    .if(body('type').not().equals('land'))
+    .if(body('property_type').not().equals('land'))
     .isObject()
     .withMessage('Les détails des pièces doivent être un objet pour les propriétés qui ne sont pas des terrains.')
-    .custom((rooms) => {
-      if (typeof rooms !== 'object') {
-        throw new Error('Les détails des pièces doivent être un objet.');
-      }
-      const { bedrooms, livingRooms, kitchens, bathrooms } = rooms;
-      if (
-        bedrooms !== undefined && typeof bedrooms !== 'number' ||
-        livingRooms !== undefined && typeof livingRooms !== 'number' ||
-        kitchens !== undefined && typeof kitchens !== 'number' ||
-        bathrooms !== undefined && typeof bathrooms !== 'number'
-      ) {
-        throw new Error('Les détails des pièces doivent être des nombres.');
+    .custom((value, { req }) => {
+      if (req.body.property_type !== 'land') {
+        if (!value || typeof value !== 'object') {
+          throw new Error("Les informations sur les pièces sont requises pour les propriétés qui ne sont pas des terrains.");
+        }
+        const { bedrooms, livingRooms, kitchens, bathrooms } = value;
+        if (typeof bedrooms !== 'number' || !bedrooms) {
+          throw new Error('Vous devez préciser le nombre de chambres');
+        }
+        if (typeof livingRooms !== 'number' || !livingRooms) {
+          throw new Error('Vous devez préciser le nombre de salons');
+        }
+        if (typeof kitchens !== 'number' || !kitchens) {
+          throw new Error('Vous devez préciser le nombre de cuisines');
+        }
+        if (typeof bathrooms !== 'number' || !bathrooms) {
+          throw new Error('Vous devez préciser le nombre de salles de bain');
+        }
       }
       return true;
     }),
 
   body('images')
-    .isArray({ min: 1 })
-    .withMessage('Les images doivent être fournies sous forme de tableau avec au moins une image.')
+    .isArray({ min: 4, max:10 })
+    .withMessage('Au moins quatres images sont requises.')
     .custom((images) => {
       if (!images.every((img:string) => typeof img === 'string')) {
         throw new Error('Chaque image doit être une chaîne de caractères.');

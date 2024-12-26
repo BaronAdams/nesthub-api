@@ -1,12 +1,15 @@
 import { Router } from 'express'
-import { createPropertyValidator, updatePropertyValidator } from './property.validator'
-// import { isAuthenticated } from './auth.middleware'
-import { createPropertyController, getPropertyController, getPropertiesController } from './property.controller'
+import { createPropertyController, getPropertyController, getPropertiesController, likeOrUnlikePropertyController, saveOrUnSavePropertyController } from './property.controller'
+import { likeOrSavePropertyValidator } from './validators/like-or-save-property.validator'
+import { isSeller } from '../user/user.middleware'
+import { createPropertyValidator } from './validators/create-property.validator'
 
 const router = Router()
 
 router.get('/',getPropertiesController)
 router.get('/:id',getPropertyController)
-router.post('/create',createPropertyValidator,createPropertyController)
+router.post('/create',isSeller, createPropertyValidator, createPropertyController)
+router.post('/:id/like',likeOrSavePropertyValidator,likeOrUnlikePropertyController)
+router.post('/:id/save',likeOrSavePropertyValidator,saveOrUnSavePropertyController)
 
 export default router

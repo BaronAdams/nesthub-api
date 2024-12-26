@@ -7,7 +7,7 @@ import postRouter from '../modules/post/post.route'
 import userRouter from '../modules/user/user.route'
 import propertyRouter from '../modules/property/property.route'
 import upload from '../common/middlewares/multer'
-import { connect } from '../db/mysql/connection';
+import { connect } from '../db/sql/connect';
 
 const host = process.env.NODE_ENV == "production" ? process.env.HOSTNAME : 'localhost'
 const port = 7000
@@ -38,7 +38,7 @@ app.use(express.json())
 app.use('/api/auth', authRouter)
 // Middleware vers les routeur chargé des Post (de prefixe /api/posts/ )
 app.use('/api/posts', postRouter)
-// Middleware vers les routeur chargé des Post (de prefixe /api/posts/ )
+// Middleware vers les routeur chargé des Post (de prefixe /api/users/ )
 app.use('/api/users', userRouter)
 // Middleware vers les routeur chargé des Post (de prefixe /api/posts/ )
 app.use('/api/properties', propertyRouter)

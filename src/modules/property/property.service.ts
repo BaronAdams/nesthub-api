@@ -8,17 +8,19 @@ export const createProperty = async (propertyData: CreatePropertyDto) => {
     const property = await Property.create(propertyData);
     return property;
   } catch (error) {
-    throw new Error(`Erreur lors de la création de la propriété`);
+    console.log(`Erreur lors de la création de la propriété`);
+    console.log(error)
   }
 };
 
 // Fonction pour récupérer tous les propriétés
-export const getProperties = async (page?:number) => {
+export const getProperties = async (page?: number) => {
   try {
     const properties = await Property.findAll();
     return properties;
   } catch (error) {
-    throw new Error(`Erreur lors de la récupérations des propriétés`);
+    console.log(`Erreur lors de la récupérations des propriétés`);
+    console.log(error)
   }
 };
 
@@ -56,7 +58,7 @@ export const deleteProperty = async (id: string) => {
 };
 
 // Rechercher des propriétés par type
-export const searchPropertiesByType = async (property_type: string, page?:number) => {
+export const searchPropertiesByType = async (property_type: string, page?: number) => {
   try {
     const properties = await Property.findAll({
       where: { property_type }
@@ -68,7 +70,7 @@ export const searchPropertiesByType = async (property_type: string, page?:number
 };
 
 // Rechercher des propriétés par prix
-export const searchPropertiesByPrice = async (minPrice: number, maxPrice: number, page?:number) => {
+export const searchPropertiesByPrice = async (minPrice: number, maxPrice: number, page?: number) => {
   try {
     const properties = await Property.findAll({
       where: {
@@ -84,10 +86,10 @@ export const searchPropertiesByPrice = async (minPrice: number, maxPrice: number
 };
 
 // Rechercher des propriétés par localisation
-export const searchPropertiesByLocation = async (place: string, page?:number) => {
+export const searchPropertiesByLocation = async (city: string, page?: number) => {
   try {
     const properties = await Property.findAll({
-      where: { place: { [Op.like]: `%${place}%` } }
+      where: { city: { [Op.like]: `%${city}%` } }
     });
     return properties;
   } catch (error) {
@@ -96,7 +98,7 @@ export const searchPropertiesByLocation = async (place: string, page?:number) =>
 };
 
 // Rechercher des propriétés par nombre de chambres
-export const searchPropertiesByRooms = async (minRooms: number, maxRooms: number, page?:number) => {
+export const searchPropertiesByRooms = async (minRooms: number, maxRooms: number, page?: number) => {
   try {
     const properties = await Property.findAll({
       where: {
@@ -113,7 +115,7 @@ export const searchPropertiesByRooms = async (minRooms: number, maxRooms: number
 
 
 // Fonction de recherche des propriétés selon le statut (à louer ou à vendre)
-export const searchPropertiesByStatus = async (status: string, page?:number) => {
+export const searchPropertiesByStatus = async (status: string, page?: number) => {
   try {
     const properties = await Property.findAll({
       where: {
@@ -128,7 +130,7 @@ export const searchPropertiesByStatus = async (status: string, page?:number) => 
 
 
 // Fonction de recherche générale (prix, type, localisation,nombre de chambres, statut etc.)
-export const searchProperties = async (filters: any, page?:number) => {
+export const searchProperties = async (filters: any, page?: number) => {
   try {
     const conditions: any = {};
     if (filters.property_type) conditions.property_type = filters.property_type;
@@ -150,4 +152,28 @@ export const searchProperties = async (filters: any, page?:number) => {
     throw new Error(`Erreur lors de la recherche de propriétés`);
   }
 };
+
+// Fonction pour ajouter liker/déliker une propriété
+export const likeOrUnlikeProperty = async (propertyId: string, userId: string) => {
+  const property = await Property.findByPk(propertyId);
+  if (!property) throw new Error('Propriété introuvable');
+  if (!property.likedBy.includes(userId)) {
+    property.likedBy.push(userId);
+  } else {
+    property.likedBy = property.likedBy.filter((id) => id !== userId);
+  }
+  await property.save();
+}
+
+export const saveOrUnsaveProperty = async (propertyId: string, userId: string) =>{
+  const property = await Property.findByPk(propertyId);
+  if (!property) throw new Error('Propriété introuvable');
+  if (!property.savedBy.includes(userId)) {
+    property.savedBy.push(userId);
+  } else {
+    property.savedBy = property.savedBy.filter((id) => id !== userId);
+  }
+  await property.save();
+}
+
 

@@ -1,58 +1,57 @@
-import { Table, Column, Model, ForeignKey, DataType, PrimaryKey, BelongsTo, IsUUID } from 'sequelize-typescript';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, Sequelize, ForeignKey, BelongsTo, NonAttribute } from 'sequelize';
 import Post from '../post/post.model';
 import User from '../user/user.model';
 
-export interface ICommentAttributes {
-  id: string;
-  content: string;
-  postId: string;
-  authorId: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+class Comment extends Model<
+  InferAttributes<Comment>,
+  InferCreationAttributes<Comment>
+> {
+  declare id: CreationOptional<string>;
+  declare content: string;
+  declare postId: ForeignKey<Post['id']>;
+  declare authorId: ForeignKey<User['id']>;
+
+  // Définition des relations
+  declare post: NonAttribute<Post[]>;
+  declare author: NonAttribute<User[]>;
+
+  // Initialisation du modèle
+  static initialize(sequelize: Sequelize) {
+    this.init(
+      {
+        id: {
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
+          primaryKey: true,
+        },
+        content: {
+          type: DataTypes.TEXT,
+          allowNull: false,
+        },
+        postId: {
+          type: DataTypes.UUID,
+          allowNull: false,
+        },
+        authorId: {
+          type: DataTypes.UUID,
+          allowNull: false,
+        },
+      },
+      {
+        sequelize,
+        tableName: 'comments',
+        timestamps: true, // Inclut createdAt et updatedAt
+      }
+    );
+  }
+  
+  static associate(models: any) {
+    this.belongsTo(models.Post, { foreignKey: 'postId' });
+    this.belongsTo(models.User, { foreignKey: 'authorId' });
+  }
 }
 
-export interface ICommentCreationAttributes extends Partial<ICommentAttributes> {}
+// Définition des relations
 
-@Table({
-  tableName: 'comments',
-  timestamps: true, // CreatedAt and UpdatedAt columns will be generated automatically
-})
-class Comment extends Model<ICommentAttributes, ICommentCreationAttributes> implements ICommentAttributes {
-  @PrimaryKey
-  @IsUUID(4)
-  @Column({
-    type:DataType.UUID,
-    defaultValue: DataType.UUIDV4
-  })
-  public id!: string;
-
-  @Column({
-    type: DataType.TEXT,
-    allowNull: false,
-  })
-  public content!: string;
-
-  @ForeignKey(() => Post)
-  @IsUUID(4)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  public postId!: string;
-
-  @ForeignKey(() => User)
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  public authorId!: string;
-
-  @BelongsTo(() => Post,"postId")
-  public post!: Post;
-
-  @BelongsTo(() => User,"authorId")
-  public author!: User;
-}
 
 export default Comment;
-

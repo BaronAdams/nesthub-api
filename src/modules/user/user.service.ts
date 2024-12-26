@@ -1,4 +1,4 @@
-import User, { IUserAttributes } from "./user.model";
+import User from "./user.model";
 import { updateUserDto } from "../auth/auth.dto";
 import { getAdminByEmail } from "../admin/admin.service";
 import { RegisterUserDto } from "../auth/dto/register-user.dto";

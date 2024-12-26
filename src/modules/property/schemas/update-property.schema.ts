@@ -8,7 +8,7 @@ export const updatePropertyJsonSchema = {
       type: "string",
       minLength: 1,
     },
-    type: {
+    property_type: {
       type: "string",
       enum: ['land', 'villa', 'banquet_hall', 'building', 'apartment', 'duplex'],
     },
@@ -16,7 +16,10 @@ export const updatePropertyJsonSchema = {
       type: "string",
       enum: ['for_sale', 'for_rent', 'leased', 'sold'],
     },
-    place: {
+    city: {
+      type: "string",
+    },
+    hood: {
       type: "string",
     },
     furnished: {
@@ -28,15 +31,6 @@ export const updatePropertyJsonSchema = {
     priceFrequency: {
       type: "string",
       enum: ["hourly", "daily", "weekly", "monthly", "yearly"],
-    },
-    sellerId: {
-      type: "string",
-    },
-    agentId: {
-      type: "string",
-    },
-    agencyId: {
-      type: "string",
     },
     area: {
       type: "number",
@@ -56,7 +50,8 @@ export const updatePropertyJsonSchema = {
     images: {
       type: "array",
       items: { type: "string" },
-      minItems: 1,
+      minItems: 4,
+      maxItems:10
     },
   },
   allOf: [

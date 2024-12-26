@@ -1,19 +1,21 @@
 import { Request, Response, NextFunction } from "express"
-import { isAdmin } from "../auth/auth.middleware"
+import { isAuthenticated } from "../auth/auth.middleware"
 import Property from "./property.model"
 
 export const isPropertyOwner = (req: Request, res: Response, next: NextFunction) => {
-    isAdmin(req,res, async()=>{
+    isAuthenticated(req, res, async () => {
         const postId = req.params.id
-        const adminId = req.headers["session-admin-id"]
-        let findedPost = await Property.findOne({
-            where:{
+        let jsonifyUser = req.headers["session-user"] ? req.headers["session-user"] : ""
+        // @ts-ignore
+        let user = JSON.parse(jsonifyUser)
+        let propertyfinded = await Property.findOne({
+            where: {
                 // @ts-ignore
-                adminId: adminId,
+                sellerId: user.id,
                 id: postId
             }
         })
-        if(!findedPost) return res.status(403).json("Vous n'êtes pas autorisé")
+        if (!propertyfinded) return res.status(403).json({ error: true, message: "Vous n'êtes pas autorisé" })
         next()
     })
 }

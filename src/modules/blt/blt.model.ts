@@ -1,31 +1,41 @@
-import { Table, Column, Model, DataType, PrimaryKey, IsUUID } from 'sequelize-typescript';
+import {
+  Model,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  Sequelize,
+} from 'sequelize';
 
-export interface IBlackListedTokenAttributes {
-  id: string;
-  token: string;
-}
+class BlackListedToken extends Model<
+  InferAttributes<BlackListedToken>,
+  InferCreationAttributes<BlackListedToken>
+> {
+  declare id: CreationOptional<string>;
+  declare token: string;
 
-export interface IBlackListedTokenCreationAttributes extends Partial<IBlackListedTokenAttributes> {}
-
-@Table({
-  tableName: 'blacklistedtokens',
-  timestamps: false, // No timestamps are needed for this table.
-})
-class BlackListedToken extends Model<IBlackListedTokenAttributes, IBlackListedTokenCreationAttributes> implements IBlackListedTokenAttributes {
-  @PrimaryKey
-  @IsUUID(4)
-  @Column({
-    type:DataType.UUID,
-    defaultValue: DataType.UUIDV4
-  })
-  public id!: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    unique: true,
-  })
-  public token!: string;
+  // Initialisation du modèle
+  static initialize(sequelize: Sequelize) {
+    BlackListedToken.init(
+      {
+        id: {
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
+          primaryKey: true,
+        },
+        token: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          unique: true,
+        },
+      },
+      {
+        sequelize,
+        tableName: 'blacklistedtokens',
+        timestamps: false, // Pas besoin de timestamps pour cette table
+      }
+    );
+  }
 }
 
 export default BlackListedToken;

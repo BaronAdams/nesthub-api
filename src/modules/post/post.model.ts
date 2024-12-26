@@ -1,72 +1,64 @@
-import { Model, Column, Table, ForeignKey, BelongsTo, DataType, HasMany, IsUUID, PrimaryKey } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, Sequelize, ForeignKey, NonAttribute } from 'sequelize';
 import Admin from '../admin/admin.model';
 import Comment from '../comment/comment.model';
-import { Optional } from 'sequelize';
 
-export interface IPostAttributes {
-    id: string;
-    title: string;
-    content: string;
-    adminId: string;
-    coverPic?: string;
-    views?: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
-export interface IPostCreationAttributes extends Optional<IPostAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
+  declare id: CreationOptional<string>;
+  declare title: string;
+  declare content: string;
+  declare adminId: ForeignKey<Admin['id']>;
+  declare coverPic: string | null;
+  declare views: CreationOptional<number>;
+  declare comments?: NonAttribute<Comment[]>;
 
-@Table({
-    tableName: 'posts',
-    timestamps: true
-})
-class Post extends Model<IPostAttributes, IPostCreationAttributes> implements IPostAttributes {
-    @PrimaryKey
-    @IsUUID(4)
-    @Column({
-        type:DataType.UUID,
-        defaultValue: DataType.UUIDV4
-    })
-    public id!: string;
+  // Méthode statique pour initialiser le modèle
+  static initialize(sequelize: Sequelize) {
+    this.init(
+      {
+        id: {
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
+          primaryKey: true,
+        },
+        title: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        content: {
+          type: DataTypes.TEXT,
+          allowNull: false,
+        },
+        adminId: {
+          type: DataTypes.UUID,
+          allowNull: false,
+        },
+        views: {
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+        },
+        coverPic: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+      },
+      {
+        sequelize,
+        tableName: 'posts',
+        timestamps: true, // Inclut createdAt et updatedAt
+      }
+    );
+  }
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    public title!: string;
-
-    @Column({
-        type: DataType.TEXT,
-        allowNull: false,
-    })
-    public content!: string;
-
-    @ForeignKey(() => Admin)
-    @IsUUID(4)
-    @Column({
-        type:DataType.UUID,
-        allowNull: false
-    })
-    public adminId!: string;
-
-    @Column({
-        type: DataType.INTEGER,
-        defaultValue: 0,
-    })
-    public views!: number;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: true,
-    })
-    public coverPic?: string;
-
-    @BelongsTo(() => Admin, 'adminId')
-    public adminAuthor!: Admin;
-
-    @HasMany(() => Comment, 'postId')
-    comments!: Comment[];
+  // Méthode statique pour définir les relations
+  static associate(models:any) {
+    // Association avec Admin : un post appartient à un admin
+    this.belongsTo(models.Admin, { foreignKey: 'adminId', as: 'author' });
+    // Association avec Comment : un post a plusieurs commentaires
+    this.hasMany(models.Comment, { foreignKey: 'postId' });
+  }
 }
 
+// Appeler la méthode statique associate dans votre fichier principal de modèles
 export default Post;
+
 

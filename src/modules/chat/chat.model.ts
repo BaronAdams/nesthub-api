@@ -1,46 +1,51 @@
-import { Table, Column, PrimaryKey, Default, IsUUID, DataType, AllowNull, Model } from "sequelize-typescript";
-import { Optional } from "sequelize";
+import {
+  Model,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  Sequelize
+} from 'sequelize';
 
-// Interface de type pour Admin
-export interface IChatAttributes {
-  id: string;
-  title?: string;
-  participants?: string[];
-  isGroup: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+class Chat extends Model<
+  InferAttributes<Chat>,
+  InferCreationAttributes<Chat>
+> {
+  declare id: CreationOptional<string>;
+  declare title: string | null;
+  declare participants: string[];
+  declare isGroup: boolean;
+
+  // Initialisation du modèle
+  static initialize(sequelize: Sequelize) {
+    this.init(
+      {
+        id: {
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
+          primaryKey: true,
+        },
+        title: {
+          type: DataTypes.STRING,
+          allowNull: true, // Optionnel si ce n'est pas un groupe
+        },
+        participants: {
+          type: DataTypes.ARRAY(DataTypes.UUID),
+          allowNull: false, // Les participants sont obligatoires
+        },
+        isGroup: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false, // Par défaut, ce n'est pas un groupe
+          allowNull: false,
+        },
+      },
+      {
+        sequelize,
+        tableName: 'chats',
+        timestamps: true, // Inclut createdAt et updatedAt
+      }
+    );
+  }
 }
 
-export interface IChatCreationAttributes extends Optional<IChatAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
-@Table({ tableName: "chats", timestamps: true })
-class Chat extends Model<IChatAttributes, IChatCreationAttributes> implements IChatAttributes {
-  @PrimaryKey
-  @IsUUID(4)
-  @Column({
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
-  })
-  id!: string;
-
-  @Column({
-    type:DataType.STRING
-  })
-  title?: string; // Optionnel si ce n'est pas un groupe
-
-  @Column({
-    type:DataType.ARRAY(DataType.UUID), 
-    allowNull: false
-  }) // IDs des participants
-  participants!: string[];
-
-
-  @Default(false) // Par défaut, ce n'est pas un groupe
-  @AllowNull(false)
-  @Column({
-    type:DataType.BOOLEAN,
-  })
-  isGroup!: boolean;
-}
-
-export default Chat
+export default Chat;

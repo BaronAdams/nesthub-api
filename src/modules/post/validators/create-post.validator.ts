@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-export const createPropertyValidator = [
+export const createPostValidator = [
   body('title')
     .isString()
     .withMessage('Le titre doit être une chaîne de caractères non vide.')

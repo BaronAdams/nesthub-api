@@ -3,7 +3,7 @@ import { JSONSchema } from 'json-schema-to-ts';
 // Schéma JSON standard pour la création de propriétés
 export const createPropertyJsonSchema = {
   type: "object",
-  required: ["title", "property_type", "status", "price", "place","agentId", "agencyId", "area", "images"],
+  required: ["title", "property_type", "status", "price", "city","hood","sellerId", "images"],
   properties: {
     title: {
       type: "string",
@@ -17,7 +17,10 @@ export const createPropertyJsonSchema = {
       type: "string",
       enum: ['for_sale', 'for_rent', 'leased', 'sold'],
     },
-    place: {
+    city: {
+      type: "string",
+    },
+    hood: {
       type: "string",
     },
     furnished: {
@@ -31,12 +34,6 @@ export const createPropertyJsonSchema = {
       enum: ["hourly", "daily", "weekly", "monthly", "yearly"],
     },
     sellerId: {
-      type: "string",
-    },
-    agentId: {
-      type: "string",
-    },
-    agencyId: {
       type: "string",
     },
     area: {
@@ -76,7 +73,9 @@ export const createPropertyJsonSchema = {
         properties: { property_type: { const: 'land' } },
       },
       then: {
-        properties: { furnished: { const: false } },
+        not:{
+          required:["furnished"]
+        }
       },
       else:{
         required:["rooms"]
