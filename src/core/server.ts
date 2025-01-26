@@ -6,6 +6,7 @@ import authRouter from '../modules/auth/auth.route'
 import postRouter from '../modules/post/post.route'
 import userRouter from '../modules/user/user.route'
 import propertyRouter from '../modules/property/property.route'
+import propertyReviewRouter from '../modules/propertyreview/properyreview.route'
 import upload from '../common/middlewares/multer'
 import { connect } from '../db/sql/connect';
 
@@ -42,6 +43,7 @@ app.use('/api/posts', postRouter)
 app.use('/api/users', userRouter)
 // Middleware vers les routeur chargé des Post (de prefixe /api/posts/ )
 app.use('/api/properties', propertyRouter)
+app.use('/api/propertiesreviews', propertyReviewRouter)
 
 // Route d'API pour uploader des fichiers dans le serveur ou dans un cloud
 app.post('/api/upload', upload, (req: Request, res: Response) => {

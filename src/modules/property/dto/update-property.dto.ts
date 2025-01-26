@@ -1,7 +1,4 @@
-import { CreatePropertyDto } from './create-property.dto';
+import { FromSchema } from 'json-schema-to-ts';
+import { updatePropertyJsonSchema } from '../schemas/update-property.schema';
 
-export type UpdatePropertyDto = Partial<CreatePropertyDto> 
-// & {
-//     likedBy?: string[]; 
-//     savedBy?: string[]
-//   };
+export type UpdatePropertyDto = FromSchema<typeof updatePropertyJsonSchema>;

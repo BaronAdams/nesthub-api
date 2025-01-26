@@ -12,8 +12,8 @@ import User from '../user/user.model';
 import Property from '../property/property.model';
 
 class PropertyReview extends Model<
-  InferAttributes<PropertyReview>,
-  InferCreationAttributes<PropertyReview>
+  InferAttributes<PropertyReview, { omit: 'author' | 'property'}>,
+  InferCreationAttributes<PropertyReview, { omit: 'author' | 'property'}>
 > {
   declare id: CreationOptional<string>;
   declare authorId: ForeignKey<User['id']>;
@@ -21,8 +21,8 @@ class PropertyReview extends Model<
   declare stars: number;
   declare comment: string;
 
-  declare author?: NonAttribute<User>;
-  declare property?: NonAttribute<Property>;
+  declare author: NonAttribute<User>;
+  declare property: NonAttribute<Property>;
 
   // Initialisation du modèle
   static initialize(sequelize: Sequelize) {

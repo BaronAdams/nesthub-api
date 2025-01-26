@@ -1,8 +1,18 @@
 import { matchedData, validationResult } from "express-validator"
 import { CreatePropertyReviewDto } from "./dto/create-property-review.dto"
-import { createPropertyReview, deletePropertyReview, updatePropertyReview } from "./propertyreview.service"
+import { createPropertyReview, deletePropertyReview, getPropertyReviews, updatePropertyReview } from "./propertyreview.service"
 import { Request, Response } from "express"
 import { UpdatePropertyReviewDto } from "./dto/update-property-review.dto"
+
+export const getAllPropertyReviewsController = async (req: Request, res: Response) => {
+    try {
+        const reviews = await getPropertyReviews()
+        return res.status(201).json({success: true, reviews})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json("Une erreur est survenue")
+    }
+}
 
 export const createPropertyReviewController = async (req: Request, res: Response) => {
     let result = validationResult(req)

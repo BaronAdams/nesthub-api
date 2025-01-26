@@ -1,3 +1,4 @@
+// import { users } from "../data";
 import sequelize from "./config";
 import models from "./models";
 
@@ -19,6 +20,9 @@ export const connect = async () => {
         console.log("DATABASE CONNECTION SUCCESSFUL");
         await sequelize.sync({ alter: true });
         console.log("SYNC SUCCESFUL");
+        // @ts-ignore
+        // await models.User.bulkCreate(users)
+        // console.log("DEFAULT VALUES SUCCESFUL CREATED");
     } catch (error) {
         console.log(error);
     }

@@ -3,8 +3,8 @@ import Post from '../post/post.model';
 import User from '../user/user.model';
 
 class Comment extends Model<
-  InferAttributes<Comment>,
-  InferCreationAttributes<Comment>
+  InferAttributes<Comment, { omit: 'post' | 'author'}>,
+  InferCreationAttributes<Comment, { omit: 'post' | 'author'}>
 > {
   declare id: CreationOptional<string>;
   declare content: string;
@@ -12,8 +12,8 @@ class Comment extends Model<
   declare authorId: ForeignKey<User['id']>;
 
   // Définition des relations
-  declare post: NonAttribute<Post[]>;
-  declare author: NonAttribute<User[]>;
+  declare post: NonAttribute<Post>;
+  declare author: NonAttribute<User>;
 
   // Initialisation du modèle
   static initialize(sequelize: Sequelize) {
@@ -46,8 +46,8 @@ class Comment extends Model<
   }
   
   static associate(models: any) {
-    this.belongsTo(models.Post, { foreignKey: 'postId' });
-    this.belongsTo(models.User, { foreignKey: 'authorId' });
+    this.belongsTo(models.Post, { foreignKey: 'postId', as:'post' });
+    this.belongsTo(models.User, { foreignKey: 'authorId', as:'author' });
   }
 }
 

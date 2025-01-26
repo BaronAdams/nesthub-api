@@ -7,24 +7,37 @@ import {
   ForeignKey,
   Sequelize,
   Op,
-  NonAttribute
+  NonAttribute,
+  HasManyCountAssociationsMixin
 } from 'sequelize';
 import User from '../user/user.model';
 import PropertyReview from '../propertyreview/propertyreview.model';
 
+type PriceFrequency = 
+  | { jours: number; mois?:never; semaines?:never; années?:never } 
+  |  { jours?: never; mois:number; semaines?:never; années?:never } 
+  |  { jours?: never; mois?:never; semaines:number; années?:never }
+  |  { jours?: never; mois?:never; semaines?:never; années:number };
+
 class Property extends Model<
-  InferAttributes<Property,{ omit: 'reviews'}>,
-  InferCreationAttributes<Property,{ omit: 'reviews'}>
+  InferAttributes<Property,{ omit: 'seller' | 'reviews'}>,
+  InferCreationAttributes<Property,{ omit: 'seller' | 'reviews'}>
 > {
   declare id: CreationOptional<string>;
   declare title: string;
-  declare property_type: 'land' | 'villa' | 'banquet_hall' | 'building' | 'apartment' | 'duplex';
-  declare status: 'for_sale' | 'for_rent' | 'leased' | 'sold';
+  declare property_type: 'Terrain' | 'Villa' | 'Salle de fêtes' | 'Immeuble' | 'Appartement' | 'Duplex' | 'Studio' | 'Chambre d\'hôtel' | 'Entrepôt' | 'Maison de vacances' | 'Bureau' | 'Magasin' | 'Espace de vente' | 'Contenaire' | 'Chambre étudiant' | 'Maison';
+  declare status: 'A vendre' | 'A louer' | 'Indisponible' | 'Déja pris';
   declare city: string;
   declare hood: string;
   declare furnished: boolean | null;
   declare price: number;
-  declare priceFrequency: CreationOptional<'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly'>;
+  declare priceFrequency: CreationOptional<PriceFrequency>;
+  // {
+  //   jours: number,
+  //   semaines: number,
+  //   mois: number,
+  //   années: number
+  // }>;
   declare sellerId: ForeignKey<User['id']>;
   declare area: number | null;
   declare description: string | null;
@@ -40,6 +53,7 @@ class Property extends Model<
   declare savedBy: CreationOptional<string[]>;
 
   //Associations
+  declare seller: NonAttribute<User>;
   declare reviews: NonAttribute<PropertyReview[]>;
 
   // Initialisation du modèle
@@ -58,22 +72,18 @@ class Property extends Model<
         },
 
         property_type: {
-          type: DataTypes.ENUM('land', 'villa', 'banquet_hall', 'building', 'apartment', 'duplex'),
+          type: DataTypes.STRING,
           allowNull: false,
         },
 
         status: {
-          type: DataTypes.ENUM('for_sale', 'for_rent', 'leased', 'sold'),
+          type: DataTypes.STRING,
           allowNull: false,
         },
 
         city: {
           type: DataTypes.STRING,
           allowNull: false,
-          validate: {
-            args: [["Bafoussam", "Bamenda", "Bertoua", "Buéa", "Douala", "Ebolowa", "Garoua", "Maroua", "Ngaoundéré", "Yaoundé"]],
-            msg: "Votre propriété doit être logée dans l'une des villes du Cameroun"
-          }
         },
 
         hood: {
@@ -84,17 +94,6 @@ class Property extends Model<
         furnished: {
           type: DataTypes.BOOLEAN,
           allowNull: true,
-          validate: {
-            isValidFurnished(value: boolean | null) {
-              if (this.type === 'land' && value) {
-                throw new Error("Ce ne sont que des propriétés qui ne sont pas des terrains qui peuvent être meublées");
-              }
-              // @ts-ignore
-              if (this.type !== 'land' && !value) {
-                throw new Error("Vous devez spécifier si oui ou non les propriétés sont meublées");
-              }
-            }
-          }
         },
 
         price: {
@@ -103,35 +102,13 @@ class Property extends Model<
         },
 
         priceFrequency: {
-          type: DataTypes.STRING,
+          type: DataTypes.JSONB,
           allowNull: true,
-          validate: {
-            isIn: {
-              args: [['hourly', 'daily', 'weekly', 'monthly', 'yearly']],
-              msg: "Vous devez préciser une fréquence de prix soit par heure, soit journalière, soit par semaine, soit par mois, soit par an"
-            },
-            isValidPriceFrequency(value: string) {
-              if (this.status === 'for_sale' && value) {
-                throw new Error("La fréquence de prix n'est possible que pour les propriétés à louer");
-              }
-            }
-          }
         },
 
         sellerId: {
           type: DataTypes.UUID,
-          allowNull: false,
-          validate: {
-            isUUID: 4,
-            async isSeller(value: string) {
-              if (value) {
-                const user = await User.findOne({ where: { id: value, role: { [Op.in]: ["seller", "both"] } } });
-                if (!user) {
-                  throw Error("L'utilisateur n'est pas authorisé à vendre");
-                }
-              }
-            }
-          }
+          allowNull: false
         },
 
         area: {
@@ -151,24 +128,13 @@ class Property extends Model<
               return 0
             }
             let totalStars = this.reviews.reduce((sum,review)=> sum + review.stars, 0)
-            return totalStars / this.reviews.length
+            return Math.round(10 * totalStars / this.reviews.length) / 10
           }
         },
 
         rooms: {
           type: DataTypes.JSONB,
-          allowNull: true,
-          validate: {
-            isRoomsRequired(value: any) {
-              if (this.type !== "land" && !value) {
-                throw new Error("La précision des pièces est obligatoire");
-              }
-
-              if (this.type == "land" && value) {
-                throw new Error("La précision des pièces ne sont pas possible pour des terrains");
-              }
-            }
-          }
+          allowNull: true
         },
 
         images: {

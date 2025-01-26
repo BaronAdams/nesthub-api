@@ -1,12 +1,6 @@
 import { body } from "express-validator";
 
-export const createPropertyReviewValidator = [
-    body('authorId')
-      .isUUID(4)
-      .withMessage("Le format de l'ID de l'auteur du feedback n'est pas valide")
-      .notEmpty()
-      .withMessage("L'ID de l'auteur de feedback est obligatoire"),
-    
+export const createPropertyReviewValidator = [   
     body('propertyId')
       .isUUID(4)
       .withMessage("Le format de l'ID de la propriété feedbacké n'est pas valide")

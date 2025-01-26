@@ -17,19 +17,23 @@ import Comment from '../comment/comment.model';
 import { generateColor } from '../../common/utils/helper';
 import PropertyReview from '../propertyreview/propertyreview.model';
 import UserReview from '../user-review/user-review.model';
+import Review from '../review/review.model';
+import Subscription from '../subscription/subscription.model';
 
 // Types pour les langues et les préférences
-type LangLevel = "Débutant" | "Courant" | "Expert";
-type Preferences = {
-  types: string[],
-  minBudget: number,
-  maxBudget: number,
+export type LangLevel = "Débutant" | "Courant" | "Expert";
+export type Preferences = {
+  property_type?: string[],
+  hood?: string[],
+  city?: string[],
+  minPrice?: number,
+  maxPrice?: number
 };
 
 // Modèle `User`
 class User extends Model<
-  InferAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' }>,
-  InferCreationAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' }>
+  InferAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' | 'reviewsWritten' }>,
+  InferCreationAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' | 'reviewsWritten' }>
 > {
   declare id: CreationOptional<string>;
   declare firstName: string;
@@ -38,14 +42,14 @@ class User extends Model<
   declare password: string;
   declare phone: string;
   declare languages: {
-    french: LangLevel;
-    english: LangLevel;
+    french: 'Débutant'| 'Courant'| 'Expert';
+    english: 'Débutant'| 'Courant'| 'Expert';
   } | null;
-  declare preferences: Preferences | null;
+  declare scores: any;
   declare location: string;
   declare birthday: Date | null;
   declare color: CreationOptional<string>;
-  declare role: 'buyer' | 'seller' | 'both' | 'admin';
+  declare role: "buyer" | "seller" | "both" | "admin";
   declare isOnline: CreationOptional<boolean>;
   declare lastSeen: CreationOptional<Date>;
   declare profilePic: CreationOptional<string>;
@@ -61,6 +65,8 @@ class User extends Model<
   declare propertiesReviewsWritten?: NonAttribute<PropertyReview[]>;
   declare usersReviewsWritten?: NonAttribute<UserReview[]>;
   declare usersReviewsReceived?: NonAttribute<UserReview[]>;
+  declare reviewsWritten?: NonAttribute<Review[]>;
+  declare subscriptions?: NonAttribute<Subscription[]>;
 
   // Méthodes pour les relations `HasMany`
   // declare addProperty: HasManyAddAssociationMixin<Property, string>;
@@ -120,9 +126,15 @@ class User extends Model<
           type: DataTypes.JSONB,
           allowNull: true,
         },
-        preferences: {
+        scores: {
           type: DataTypes.JSONB,
-          allowNull: true,
+          allowNull:true,
+          defaultValue: {
+            property_type:{},
+            userId:{},
+            hood:{},
+            city:{},
+          }
         },
         location: {
           type: DataTypes.STRING,
@@ -135,11 +147,11 @@ class User extends Model<
         color: {
           type: DataTypes.STRING,
           allowNull: true,
-          defaultValue: generateColor(),
+          // defaultValue: generateColor(),
         },
         role: {
           type: DataTypes.ENUM,
-          values:['buyer', 'seller', 'both', 'admin'],
+          values:["buyer", "seller", "both", "admin"],
           allowNull: false,
           defaultValue: 'both'
         },
@@ -197,6 +209,8 @@ class User extends Model<
     this.hasMany(models.PropertyReview, { foreignKey: 'authorId', as: 'propertiesReviewsWritten' });
     this.hasMany(models.UserReview, { foreignKey: 'authorId', as: 'usersReviewsWritten' });
     this.hasMany(models.UserReview, { foreignKey: 'userId', as: 'usersReviewsReceived' });
+    this.hasMany(models.Review, { foreignKey: 'authorId', as: 'reviewsWritten' });
+    this.hasMany(models.Subscription, { foreignKey: 'subsciberId', as: 'subscriptions' });
   }
 }
 

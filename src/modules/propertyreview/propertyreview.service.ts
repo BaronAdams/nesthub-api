@@ -3,6 +3,16 @@ import PropertyReview from './propertyreview.model';
 import { UpdatePropertyReviewDto } from './dto/update-property-review.dto';
 
 // Fonction pour créer une propriété
+export const getPropertyReviews = async () => {
+  try {
+    const propertyReviews = await PropertyReview.findAll();
+    return propertyReviews;
+  } catch (error) {
+    console.log(`Erreur lors de la recupérationde de données`);
+    console.log(error)
+  }
+};
+
 export const createPropertyReview = async (reviewData: CreatePropertyReviewDto) => {
   try {
     const propertyReview = await PropertyReview.create(reviewData);

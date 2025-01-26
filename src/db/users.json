@@ -1,0 +1,225 @@
+[
+    {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "johndoe@gmail.com",
+        "password": "S3Cret!",
+        "location": "Douala",
+        "phone": "657230933",
+        "role": "seller"
+    },
+    {
+        "firstName": "Chris",
+        "lastName": "Porter",
+        "email": "chrisporter@gmail.com",
+        "password": "S3Cret!",
+        "location": "Bertoua",
+        "phone": "615528743",
+        "role": "seller"
+    },
+    {
+        "firstName": "Zachary",
+        "lastName": "Chambers",
+        "email": "zacharychambers@gmail.com",
+        "password": "S3Cret!",
+        "location": "Maroua",
+        "phone": "638989286",
+        "role": "buyer"
+    },
+    {
+        "firstName": "Floyd",
+        "lastName": "Powell",
+        "email": "floydpowell@gmail.com",
+        "password": "S3Cret!",
+        "location": "Garoua",
+        "phone": "613929675",
+        "role": "seller"
+    },
+    {
+        "firstName": "Roxie",
+        "lastName": "Evans",
+        "email": "roxievans@gmail.com",
+        "password": "S3Cret!",
+        "location": "Ebolowa",
+        "phone": "638721581",
+        "role": "seller"
+    },
+    {
+        "firstName": "Louis",
+        "lastName": "Cobb",
+        "email": "louiscobb@gmail.com",
+        "password": "S3Cret!",
+        "location": "Yaoundé",
+        "phone": "680178240",
+        "role": "seller"
+    },
+    {
+        "firstName": "Ora",
+        "lastName": "Ingrame",
+        "email": "oraingrame@gmail.com",
+        "password": "S3Cret!",
+        "location": "Ebolowa",
+        "phone": "610154700",
+        "role": "buyer"
+    },
+    {
+        "firstName": "Stephen",
+        "lastName": "Wong",
+        "email": "stephenwong@gmail.com",
+        "password": "S3Cret!",
+        "location": "Ngaoundéré",
+        "phone": "628128849",
+        "role": "buyer"
+    },
+    {
+        "firstName": "Viola",
+        "lastName": "Baldwin",
+        "email": "violabaldwin@gmail.com",
+        "password": "S3Cret!",
+        "location": "Bamenda",
+        "phone": "642515716",
+        "role": "seller"
+    },
+    {
+        "firstName": "Bernice",
+        "lastName": "Lowe",
+        "email": "bernicelowe@gmail.com",
+        "password": "S3Cret!",
+        "location": "Maroua",
+        "phone": "626420797",
+        "role": "seller"
+    },
+    {
+        "firstName": "Troy",
+        "lastName": "Day",
+        "email": "troyday@gmail.com",
+        "password": "S3Cret!",
+        "location": "Yaoundé",
+        "phone": "644277140",
+        "role": "both"
+    },
+    {
+        "firstName": "Adrian",
+        "lastName": "Black",
+        "email": "adrianblack@gmail.com",
+        "password": "S3Cret!",
+        "location": "Garoua",
+        "phone": "616806577",
+        "role": "buyer"
+    },
+    {
+        "firstName": "Raymond",
+        "lastName": "Johnson",
+        "email": "raymondjohnson@gmail.com",
+        "password": "S3Cret!",
+        "location": "Garoua",
+        "phone": "622757933",
+        "role": "buyer"
+    },
+    {
+        "firstName": "Stella",
+        "lastName": "Morales",
+        "email": "stellamorales@gmail.com",
+        "password": "S3Cret!",
+        "location": "Garoua",
+        "phone": "646530419",
+        "role": "seller"
+    },
+    {
+        "firstName": "Bradley",
+        "lastName": "Riley",
+        "email": "bradleyriley@gmail.com",
+        "password": "S3Cret!",
+        "location": "Garoua",
+        "phone": "642347540",
+        "role": "both"
+    },
+    {
+        "firstName": "Alejandro",
+        "lastName": "Garner",
+        "email": "alejandrogarner@gmail.com",
+        "password": "S3Cret!",
+        "location": "Garoua",
+        "phone": "610052532",
+        "role": "seller"
+    },
+    {
+        "firstName": "Betty",
+        "lastName": "Davis",
+        "email": "bettydavis@gmail.com",
+        "password": "S3Cret!",
+        "location": "Ebolowa",
+        "phone": "672544345",
+        "role": "seller"
+    },
+    {
+        "firstName": "Harriett",
+        "lastName": "Jordan",
+        "email": "harrietthordan@gmail.com",
+        "password": "S3Cret!",
+        "location": "Yaoundé",
+        "phone": "606526094",
+        "role": "seller"
+    },
+    {
+        "firstName": "Dominic",
+        "lastName": "Mullins",
+        "email": "dominicmullins@gmail.com",
+        "password": "S3Cret!",
+        "location": "Maroua",
+        "phone": "697182514",
+        "role": "both"
+    },
+    {
+        "firstName": "Agnes",
+        "lastName": "Richardson",
+        "email": "agnesrichardson@gmail.com",
+        "password": "S3Cret!",
+        "location": "Bafoussam",
+        "phone": "646035805",
+        "role": "seller"
+    },
+    {
+        "firstName": "Franklin",
+        "lastName": "Powell",
+        "email": "franklinpowell@gmail.com",
+        "password": "S3Cret!",
+        "location": "Ebolowa",
+        "phone": "616281538",
+        "role": "seller"
+    },
+    {
+        "firstName": "Isaac",
+        "lastName": "Pratt",
+        "email": "isaacpratt@gmail.com",
+        "password": "S3Cret!",
+        "location": "Ebolowa",
+        "phone": "655817211",
+        "role": "both"
+    },
+    {
+        "property_type":{
+            "Appartement":6,
+            "Salle de fêtes":9,
+            "Immeuble": 3
+        },
+        "hood":{
+            "Ndokotti": 2,
+            "Bonamoussadi": 3
+        },
+        "city":{
+            "Douala":5,
+            "Yaoundé": 10
+        },
+        "concierges":{
+            "0c781307-4c90-4ecb-9ac5-f73782a8e048":23,
+            "2d16dd26-4ca9-43d4-ba66-33be54f62a5e": 52
+        }
+    },
+    {
+        "property_type": "Maison",
+        "hood": "Ndokotti",
+        "city": "Douala",
+        "concierge":"2d16dd26-4ca9-43d4-ba66-33be54f62a5e"
+    }
+]

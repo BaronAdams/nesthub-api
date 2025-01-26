@@ -4,17 +4,25 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  Sequelize
+  Sequelize,
+  ForeignKey,
+  NonAttribute
 } from 'sequelize';
+import Property from '../property/property.model';
+import ChatMessage from '../chatmessage/chatmessage.model';
 
 class Chat extends Model<
-  InferAttributes<Chat>,
-  InferCreationAttributes<Chat>
+  InferAttributes<Chat,{ omit: 'messages'}>,
+  InferCreationAttributes<Chat,{ omit: 'messages'}>
 > {
   declare id: CreationOptional<string>;
   declare title: string | null;
   declare participants: string[];
   declare isGroup: boolean;
+  declare propertyId: ForeignKey<Property['id']> | null;
+
+  // Déclaration des associations
+  declare messages: NonAttribute<ChatMessage[]>;
 
   // Initialisation du modèle
   static initialize(sequelize: Sequelize) {
@@ -38,6 +46,10 @@ class Chat extends Model<
           defaultValue: false, // Par défaut, ce n'est pas un groupe
           allowNull: false,
         },
+        propertyId:{
+          type: DataTypes.UUID,
+          allowNull:true
+        }
       },
       {
         sequelize,
@@ -45,6 +57,9 @@ class Chat extends Model<
         timestamps: true, // Inclut createdAt et updatedAt
       }
     );
+  }
+  static associate(models: any) {
+    this.hasMany(models.ChatMessage, { foreignKey: 'chatId', as: 'messages' });
   }
 }
 

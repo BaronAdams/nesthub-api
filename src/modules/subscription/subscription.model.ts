@@ -1,69 +1,58 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    PrimaryKey,
-    Default,
-    CreatedAt,
-    UpdatedAt,
-    HasMany,
-    IsUUID,
-  } from 'sequelize-typescript';
-import { createId } from '@paralleldrive/cuid2';
-import { Optional } from 'sequelize';
-  
-// Interfaces de type pour Subscription
-export interface ISubscriptionAttributes {
-    id: string;
-    name: string;
-    price: number;
-    agentLimit: number;
-    propertyLimit: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
-  
-  export interface ISubscriptionCreationAttributes extends Optional<ISubscriptionAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-  
-  // Définition du modèle Subscription avec sequelize-typescript
-  @Table({
-    tableName: 'subscriptions',
-    timestamps: true,  // Gère automatiquement les champs createdAt et updatedAt
-  })
-  class Subscription extends Model<ISubscriptionAttributes, ISubscriptionCreationAttributes> implements ISubscriptionAttributes {
-    @PrimaryKey
-    @IsUUID(4)
-    @Column({
-      type:DataType.UUID,
-      defaultValue: DataType.UUIDV4
-    })  
-    public id!: string;
-  
-    @Column({
-      type: DataType.STRING,
-      allowNull: false,
-    })
-    public name!: string;
-  
-    @Column({
-      type: DataType.FLOAT,
-      allowNull: false,
-    })
-    public price!: number;
-  
-    @Column({
-      type: DataType.INTEGER,
-      allowNull: false,
-    })
-    public agentLimit!: number;
-  
-    @Column({
-      type: DataType.INTEGER,
-      allowNull: false,
-    })
-    public propertyLimit!: number;
+  Model,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  ForeignKey,
+  Sequelize,
+  NonAttribute,
+} from 'sequelize';
+import User from '../user/user.model';
+
+class Subscription extends Model<
+  InferAttributes<Subscription>,
+  InferCreationAttributes<Subscription>
+> {
+  declare id: CreationOptional<string>;
+  declare subscriberId: ForeignKey<User['id']>;
+  declare type: string;
+
+  declare subscriber?: NonAttribute<User>;
+
+  // Initialisation du modèle
+  static initialize(sequelize: Sequelize) {
+      this.init(
+          {
+              id: {
+                  type: DataTypes.UUID,
+                  defaultValue: DataTypes.UUIDV4,
+                  primaryKey: true,
+              },
+              subscriberId: {
+                  type: DataTypes.UUID,
+                  allowNull: false,
+              },
+              type: {
+                  type: DataTypes.TEXT,
+                  allowNull: false,
+              }
+          },
+          {
+              sequelize,
+              tableName: 'subscriptions',
+              timestamps: true, // Inclut createdAt et updatedAt
+          }
+      );
   }
-  
+
+  // Définition des associations
+  static associate(models: any) {
+      this.belongsTo(models.User, {
+          foreignKey: 'subscriberId',
+          as: 'subscriber',
+      });
+  }
+}
+
 export default Subscription;
-  

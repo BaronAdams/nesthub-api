@@ -11,11 +11,11 @@ export const createPropertyJsonSchema = {
     },
     property_type: {
       type: "string",
-      enum: ['land', 'villa', 'banquet_hall', 'building', 'apartment', 'duplex'],
+      enum: ['Terrain', 'Villa', 'Salle de fêtes', 'Immeuble', 'Appartement', 'Duplex', 'Studio', 'Chambre d\'hôtel', 'Entrepôt', 'Maison de vacances','Bureau' ,'Magasin' ,'Espace de vente' ,'Contenaire', 'Chambre étudiant', 'Maison'],
     },
     status: {
       type: "string",
-      enum: ['for_sale', 'for_rent', 'leased', 'sold'],
+      enum: ['A vendre', 'A louer', 'Indisponible', 'Déja pris'],
     },
     city: {
       type: "string",
@@ -30,11 +30,41 @@ export const createPropertyJsonSchema = {
       type: "number",
     },
     priceFrequency: {
-      type: "string",
-      enum: ["hourly", "daily", "weekly", "monthly", "yearly"],
+      type: "object",
+      oneOf:[
+        {
+          properties:{
+            jours: { type: "number" }
+          },
+          required:["jours"],
+          additionalProperties: false
+        },
+        {
+          properties:{
+            semaines: { type: "number" }
+          },
+          required:["semaines"],
+          additionalProperties: false
+        },
+        {
+          properties:{
+            mois: { type: "number" }
+          },
+          required:["mois"],
+          additionalProperties: false
+        },
+        {
+          properties:{
+            années: { type: "number" }
+          },
+          required:["années"],
+          additionalProperties: false
+        }
+      ]
     },
     sellerId: {
       type: "string",
+      format:"uuid"
     },
     area: {
       type: "number",
@@ -62,7 +92,7 @@ export const createPropertyJsonSchema = {
   allOf: [
     {
       if: {
-        properties: { status: { const: 'for_rent' } },
+        properties: { status: { const: 'A louer' } },
       },
       then: {
         required: ['priceFrequency'],
@@ -70,7 +100,7 @@ export const createPropertyJsonSchema = {
     },
     {
       if: {
-        properties: { property_type: { const: 'land' } },
+        properties: { property_type: { const: 'Terrain' } },
       },
       then: {
         not:{
