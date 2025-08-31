@@ -1,4 +1,11 @@
-import { DataTypes, Model, CreationOptional, Sequelize, InferAttributes, InferCreationAttributes } from 'sequelize';
+import { 
+  DataTypes, 
+  Model, 
+  CreationOptional, 
+  InferAttributes, 
+  InferCreationAttributes 
+} from 'sequelize';
+import sequelize from '../../database/db'
 
 class ContactMessage extends Model<
   InferAttributes<ContactMessage>,
@@ -8,37 +15,34 @@ class ContactMessage extends Model<
   declare authorName: string;
   declare authorEmail: string;
   declare content: string;
-
-  // Méthode statique pour initialiser le modèle
-  static initialize(sequelize: Sequelize) {
-    ContactMessage.init(
-      {
-        id: {
-          type: DataTypes.UUID,
-          defaultValue: DataTypes.UUIDV4,
-          primaryKey: true,
-        },
-        authorName: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        authorEmail: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        content: {
-          type: DataTypes.TEXT,
-          allowNull: false,
-        },
-      },
-      {
-        sequelize,
-        tableName: 'contactmessages',
-        timestamps: true, // Inclut createdAt et updatedAt
-      }
-    );
-  }
 }
+
+ContactMessage.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    authorName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    authorEmail: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'contactmessages',
+    timestamps: true, // Inclut createdAt et updatedAt
+  }
+);
 
 export default ContactMessage;
 

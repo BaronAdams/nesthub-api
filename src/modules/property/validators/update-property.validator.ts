@@ -95,13 +95,54 @@ export const updatePropertyValidator = [
     .isString()
     .withMessage('La description doit être une chaîne de caractères.'),
   
-  body('rooms')
-    .optional({ checkFalsy:true })
+    body('rooms')
+    .optional({ checkFalsy:true, nullable: true })
+    .if(body('property_type').not().isIn(['Terrain','Contenaire'])) 
     .isObject()
-    .withMessage('Les détails des pièces doivent être un objet.')
-    .custom((rooms, { req }) => {
-      if (req.body.property_type !== 'Terrain' && !rooms) {
-        throw new Error('Les détails des pièces sont requis pour les propriétés qui ne sont pas des terrains.');
+    .withMessage('rooms doit être un objet')
+    .custom((rooms: any, { req }) => {
+      const { property_type } = req.body;
+      // Vérifie si le type de propriété autorise des pièces
+      if (['Terrain', 'Contenaire'].includes(property_type)) {
+        if (rooms && Object.keys(rooms).length > 0) {
+          throw new Error('rooms ne peut pas être utilisé pour les propriétés de type "Terrain" ou "Contenaire"');
+        }
+        return true;
+      }
+
+      for (const key in rooms) {
+        if (typeof rooms[key] !== 'number' || rooms[key] < 0) {
+          throw new Error(`La valeur de ${key} doit être un nombre positif`);
+        }
+      }
+      return true;
+    }),
+
+  // Validation du champ furniture
+  body('furnitures')
+    .optional({ checkFalsy: true })
+    .isArray()
+    .withMessage('furniture doit être un tableau')
+    .custom((furnitures: any[], { req }) => {
+      const { furnished, property_type } = req.body;
+
+      // Vérifie si furnished est true et que le type de propriété n'est ni "Terrain" ni "Contenaire"
+      if (furnished !== true || ['Terrain', 'Contenaire'].includes(property_type)) {
+        throw new Error('furniture ne peut être utilisé que pour les propriétés meublées de type différent de "Terrain" et "Contenaire"');
+      }
+      if (furnished == true && !furnitures.length){
+        throw new Error('Vous devez préciser les principaux meubles de votre propriété');
+      }; // Si furniture n'est pas fourni, c'est valide
+      for (const item of furnitures) {
+        if (!item.name || typeof item.name !== 'string') {
+          throw new Error('Chaque meuble doit avoir un nom (name) de type string');
+        }
+        if (!item.quantity || typeof item.quantity !== 'number' || item.quantity < 1) {
+          throw new Error('Chaque meuble doit avoir une quantité (quantity) de type nombre positif');
+        }
+        if (item.description && typeof item.description !== 'string') {
+          throw new Error('La description du meuble doit être une chaîne de caractères');
+        }
       }
       return true;
     }),

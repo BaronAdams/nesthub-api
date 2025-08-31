@@ -5,63 +5,59 @@ import {
     InferCreationAttributes,
     CreationOptional,
     ForeignKey,
-    Sequelize,
     NonAttribute,
 } from 'sequelize';
 import User from '../user/user.model';
+import sequelize from '../../database/db'
 
 class Review extends Model<
-    InferAttributes<Review>,
-    InferCreationAttributes<Review>
+    InferAttributes<Review, { omit: 'author'}>,
+    InferCreationAttributes<Review, { omit: 'author'}>
 > {
     declare id: CreationOptional<string>;
     declare authorId: ForeignKey<User['id']>;
     declare stars: number;
     declare comment: string;
-
+    // Associations
     declare author?: NonAttribute<User>;
 
-    // Initialisation du modèle
-    static initialize(sequelize: Sequelize) {
-        this.init(
-            {
-                id: {
-                    type: DataTypes.UUID,
-                    defaultValue: DataTypes.UUIDV4,
-                    primaryKey: true,
-                },
-                authorId: {
-                    type: DataTypes.UUID,
-                    allowNull: false,
-                },
-                stars: {
-                    type: DataTypes.INTEGER,
-                    allowNull: false,
-                    validate: {
-                        min: 1,
-                        max: 5,
-                    },
-                },
-                comment: {
-                    type: DataTypes.TEXT,
-                    allowNull: false,
-                }
-            },
-            {
-                sequelize,
-                tableName: 'reviews',
-                timestamps: true, // Inclut createdAt et updatedAt
-            }
-        );
-    }
-
-    // Définition des associations
-    static associate(models: any) {
+    static associate(models: any){
         this.belongsTo(models.User, {
             foreignKey: 'authorId',
             as: 'author',
         });
     }
 }
+
+Review.init(
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        authorId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+        stars: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+                min: 1,
+                max: 5,
+            },
+        },
+        comment: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        }
+    },
+    {
+        sequelize,
+        tableName: 'reviews',
+        timestamps: true, // Inclut createdAt et updatedAt
+    }
+);
 
 export default Review;

@@ -30,7 +30,7 @@ export const createPropertyValidator = [
     .withMessage('Le quartier où se trouve la propriété doit être specifiée'),
 
   body('furnished')
-    .if(body('property_type').not().equals('Terrain'))
+    .if(body('property_type').not().isIn(['Terrain','Contenaire']))
     .isBoolean()
     .withMessage('Le champ "furnished" doit préciser si oui ou non la propriété est meublée'),
 
@@ -85,34 +85,61 @@ export const createPropertyValidator = [
     .optional({ checkFalsy: true })
     .isString()
     .withMessage('La description doit être une chaîne de caractères.'),
-
+  
   body('rooms')
-    .if(body('property_type').not().equals('Terrain'))
+    .optional({ checkFalsy:true, nullable: true })
+    .if(body('property_type').not().isIn(['Terrain','Contenaire'])) 
     .isObject()
-    .withMessage('Les détails des pièces doivent être un objet pour les propriétés qui ne sont pas des terrains.')
-    .custom((value, { req }) => {
-      if (req.body.property_type !== 'Terrain') {
-        if (!value || typeof value !== 'object') {
-          throw new Error("Les informations sur les pièces sont requises pour les propriétés qui ne sont pas des terrains.");
+    .withMessage('rooms doit être un objet')
+    .custom((rooms: any, { req }) => {
+      const { property_type } = req.body;
+      // Vérifie si le type de propriété autorise des pièces
+      if (['Terrain', 'Contenaire'].includes(property_type)) {
+        if (rooms && Object.keys(rooms).length > 0) {
+          throw new Error('rooms ne peut pas être utilisé pour les propriétés de type "Terrain" ou "Contenaire"');
         }
-        const { bedrooms, livingRooms, kitchens, bathrooms } = value;
-        if (typeof bedrooms !== 'number' || !bedrooms) {
-          throw new Error('Vous devez préciser le nombre de chambres');
+        return true;
+      }
+
+      for (const key in rooms) {
+        if (typeof rooms[key] !== 'number' || rooms[key] < 0) {
+          throw new Error(`La valeur de ${key} doit être un nombre positif`);
         }
-        if (typeof livingRooms !== 'number' || !livingRooms) {
-          throw new Error('Vous devez préciser le nombre de salons');
+      }
+      return true;
+    }),
+
+  // Validation du champ furniture
+  body('furnitures')
+    .optional({ checkFalsy: true })
+    .isArray()
+    .withMessage('furniture doit être un tableau')
+    .custom((furnitures: any[], { req }) => {
+      const { furnished, property_type } = req.body;
+
+      // Vérifie si furnished est true et que le type de propriété n'est ni "Terrain" ni "Contenaire"
+      if (furnished !== true || ['Terrain', 'Contenaire'].includes(property_type)) {
+        throw new Error('furniture ne peut être utilisé que pour les propriétés meublées de type différent de "Terrain" et "Contenaire"');
+      }
+      if (furnished == true && !furnitures.length){
+        throw new Error('Vous devez préciser les principaux meubles de votre propriété');
+      }; // Si furniture n'est pas fourni, c'est valide
+      for (const item of furnitures) {
+        if (!item.name || typeof item.name !== 'string') {
+          throw new Error('Chaque meuble doit avoir un nom (name) de type string');
         }
-        if (typeof kitchens !== 'number' || !kitchens) {
-          throw new Error('Vous devez préciser le nombre de cuisines');
+        if (!item.quantity || typeof item.quantity !== 'number' || item.quantity < 1) {
+          throw new Error('Chaque meuble doit avoir une quantité (quantity) de type nombre positif');
         }
-        if (typeof bathrooms !== 'number' || !bathrooms) {
-          throw new Error('Vous devez préciser le nombre de salles de bain');
+        if (item.description && typeof item.description !== 'string') {
+          throw new Error('La description du meuble doit être une chaîne de caractères');
         }
       }
       return true;
     }),
 
   body('images')
+    .optional({checkFalsy:true})
     .isArray({ min: 4, max: 10 })
     .withMessage('Au moins quatres images sont requises.')
     .custom((images) => {

@@ -69,12 +69,6 @@ export const updatePropertyJsonSchema = {
     },
     rooms: {
       type: "object",
-      properties: {
-        bedrooms: { type: "number" },
-        livingRooms: { type: "number" },
-        kitchens: { type: "number" },
-        bathrooms: { type: "number" },
-      },
     },
     images: {
       type: "array",

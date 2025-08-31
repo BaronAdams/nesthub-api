@@ -19,6 +19,8 @@ import PropertyReview from '../propertyreview/propertyreview.model';
 import UserReview from '../user-review/user-review.model';
 import Review from '../review/review.model';
 import Subscription from '../subscription/subscription.model';
+import sequelize from '../../database/db'
+import Chat from '../chat/chat.model';
 
 // Types pour les langues et les préférences
 export type LangLevel = "Débutant" | "Courant" | "Expert";
@@ -32,8 +34,8 @@ export type Preferences = {
 
 // Modèle `User`
 class User extends Model<
-  InferAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' | 'reviewsWritten' }>,
-  InferCreationAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' | 'reviewsWritten' }>
+  InferAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' | 'reviewsWritten' | 'buyChats' | 'sellChats' }>,
+  InferCreationAttributes<User, { omit: 'properties' | 'comments' | 'propertiesReviewsWritten' | 'usersReviewsWritten' | 'usersReviewsReceived' | 'reviewsWritten' | 'buyChats' | 'sellChats' }>
 > {
   declare id: CreationOptional<string>;
   declare firstName: string;
@@ -66,6 +68,8 @@ class User extends Model<
   declare usersReviewsWritten?: NonAttribute<UserReview[]>;
   declare usersReviewsReceived?: NonAttribute<UserReview[]>;
   declare reviewsWritten?: NonAttribute<Review[]>;
+  declare buyChats?: NonAttribute<Chat[]>;
+  declare sellChats?: NonAttribute<Chat[]>;
   declare subscriptions?: NonAttribute<Subscription[]>;
 
   // Méthodes pour les relations `HasMany`
@@ -92,126 +96,125 @@ class User extends Model<
 
   // declare getReviews: HasManyGetAssociationsMixin<UserReview>;
   // declare countReviews: HasManyCountAssociationsMixin;
-
-  static initialize(sequelize: Sequelize) {
-    this.init(
-      {
-        id: {
-          type: DataTypes.UUID,
-          defaultValue: DataTypes.UUIDV4,
-          primaryKey: true,
-        },
-        firstName: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        lastName: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        email: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          unique: true,
-        },
-        password: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        phone: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        languages: {
-          type: DataTypes.JSONB,
-          allowNull: true,
-        },
-        scores: {
-          type: DataTypes.JSONB,
-          allowNull:true,
-          defaultValue: {
-            property_type:{},
-            userId:{},
-            hood:{},
-            city:{},
-          }
-        },
-        location: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        birthday: {
-          type: DataTypes.DATE,
-          allowNull: true,
-        },
-        color: {
-          type: DataTypes.STRING,
-          allowNull: true,
-          // defaultValue: generateColor(),
-        },
-        role: {
-          type: DataTypes.ENUM,
-          values:["buyer", "seller", "both", "admin"],
-          allowNull: false,
-          defaultValue: 'both'
-        },
-        isOnline: {
-          type: DataTypes.BOOLEAN,
-          allowNull: true,
-        },
-        lastSeen: {
-          type: DataTypes.DATE,
-          allowNull: true,
-        },
-        profilePic: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        stars: {
-          type: DataTypes.FLOAT,
-          get(this: User){
-            if(!this.usersReviewsReceived || this.usersReviewsReceived.length === 0){
-              return 0
-            }
-            let totalStars = this.usersReviewsReceived.reduce((sum,review)=> sum + review.stars, 0)
-            return totalStars / this.usersReviewsReceived.length
-          }
-        },
-        createdAt: {
-          type: DataTypes.DATE,
-          allowNull: true,
-          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-        },
-        updatedAt:{
-          type: DataTypes.DATE,
-          allowNull:true
-        },
-        lastLoginDate: {
-          type: DataTypes.DATE,
-          allowNull: true,
-        },
-        lastSessionDate: {
-          type: DataTypes.DATE,
-          allowNull: true,
-        },
-      },
-      {
-        sequelize,
-        tableName: 'users',
-        timestamps: false,
-      }
-    );
-  }
-
-  static associate(models: any) {
+  static associate(models: any){
     this.hasMany(models.Property, { foreignKey: 'sellerId', as: 'properties' });
     this.hasMany(models.Comment, { foreignKey: 'authorId', as: 'comments' });
     this.hasMany(models.PropertyReview, { foreignKey: 'authorId', as: 'propertiesReviewsWritten' });
     this.hasMany(models.UserReview, { foreignKey: 'authorId', as: 'usersReviewsWritten' });
     this.hasMany(models.UserReview, { foreignKey: 'userId', as: 'usersReviewsReceived' });
     this.hasMany(models.Review, { foreignKey: 'authorId', as: 'reviewsWritten' });
+    this.hasMany(models.Chat, { foreignKey: 'buyerId', as: 'buyChats' });
+    this.hasMany(models.Chat, { foreignKey: 'sellerId', as: 'sellChats' });
     this.hasMany(models.Subscription, { foreignKey: 'subsciberId', as: 'subscriptions' });
   }
 }
+
+User.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    languages: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    scores: {
+      type: DataTypes.JSONB,
+      allowNull:true,
+      defaultValue: {
+        property_type:{},
+        userId:{},
+        hood:{},
+        city:{},
+      }
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    birthday: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    color: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      // defaultValue: generateColor(),
+    },
+    role: {
+      type: DataTypes.ENUM,
+      values:["buyer", "seller", "both", "admin"],
+      allowNull: false,
+      defaultValue: 'both'
+    },
+    isOnline: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
+    lastSeen: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    profilePic: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    stars: {
+      type: DataTypes.FLOAT,
+      get(this: User){
+        if(!this.usersReviewsReceived || this.usersReviewsReceived.length === 0){
+          return 0
+        }
+        let totalStars = this.usersReviewsReceived.reduce((sum,review)=> sum + review.stars, 0)
+        return totalStars / this.usersReviewsReceived.length
+      }
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+    },
+    updatedAt:{
+      type: DataTypes.DATE,
+      allowNull:true
+    },
+    lastLoginDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    lastSessionDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'users',
+    timestamps: false,
+  }
+);
 
 export default User;

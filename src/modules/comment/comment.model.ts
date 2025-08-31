@@ -1,10 +1,19 @@
-import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, Sequelize, ForeignKey, BelongsTo, NonAttribute } from 'sequelize';
+import { 
+  Model, 
+  DataTypes, 
+  InferAttributes, 
+  InferCreationAttributes, 
+  CreationOptional, 
+  ForeignKey, 
+  NonAttribute 
+} from 'sequelize';
 import Post from '../post/post.model';
 import User from '../user/user.model';
+import sequelize from '../../database/db'
 
 class Comment extends Model<
-  InferAttributes<Comment, { omit: 'post' | 'author'}>,
-  InferCreationAttributes<Comment, { omit: 'post' | 'author'}>
+  InferAttributes<Comment, { omit: 'post' | 'author' }>,
+  InferCreationAttributes<Comment, { omit: 'post' | 'author' }>
 > {
   declare id: CreationOptional<string>;
   declare content: string;
@@ -15,43 +24,37 @@ class Comment extends Model<
   declare post: NonAttribute<Post>;
   declare author: NonAttribute<User>;
 
-  // Initialisation du modèle
-  static initialize(sequelize: Sequelize) {
-    this.init(
-      {
-        id: {
-          type: DataTypes.UUID,
-          defaultValue: DataTypes.UUIDV4,
-          primaryKey: true,
-        },
-        content: {
-          type: DataTypes.TEXT,
-          allowNull: false,
-        },
-        postId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-        },
-        authorId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-        },
-      },
-      {
-        sequelize,
-        tableName: 'comments',
-        timestamps: true, // Inclut createdAt et updatedAt
-      }
-    );
-  }
-  
-  static associate(models: any) {
-    this.belongsTo(models.Post, { foreignKey: 'postId', as:'post' });
-    this.belongsTo(models.User, { foreignKey: 'authorId', as:'author' });
+  static associate(models: any){
+    this.belongsTo(models.Post, { foreignKey: 'postId', as: 'post' });
+    this.belongsTo(models.User, { foreignKey: 'authorId', as: 'author' });
   }
 }
 
-// Définition des relations
-
+Comment.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    postId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    authorId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'comments',
+    timestamps: true, // Inclut createdAt et updatedAt
+  }
+);
 
 export default Comment;

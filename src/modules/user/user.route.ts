@@ -4,7 +4,7 @@ import { getAllUsersController, getUserController } from "./user.controller"
 
 const router = Router()
 
-router.get('/', isAdmin, getAllUsersController)
+router.get('/',  getAllUsersController)
 router.get('/:id', getUserController)
 // router.post('/new', isAdmin, createPostValidator, createPostController)
 // router.put('/:id/edit', isPostOwner, updatePostValidator, updatePostController)

@@ -74,17 +74,24 @@ export const createPropertyJsonSchema = {
     },
     rooms: {
       type: "object",
-      properties: {
-        bedrooms: { type: "number" },
-        livingRooms: { type: "number" },
-        kitchens: { type: "number" },
-        bathrooms: { type: "number" },
-      },
-      required: ["bedrooms", "livingRooms", "kitchens", "bathrooms"],
+      additionalProperties : { type: 'number', minimum: 0 }
+    },
+    furnitures: {
+      type: "array",
+      items:{
+        type: "object",
+        properties:{
+          name : { type: "string" },
+          quantity: { type: "number", minimum:1 },
+          desciption:{ type:"string" }
+        },
+        required: ['name','quantity'],
+        additionalProperties: false
+      }
     },
     images: {
       type: "array",
-      items: { type: "string" },
+      items: { type: "string", format:"uri" },
       minItems: 4,
       maxItems:10
     }
@@ -100,17 +107,31 @@ export const createPropertyJsonSchema = {
     },
     {
       if: {
-        properties: { property_type: { const: 'Terrain' } },
+        properties: { property_type: { enum: ['Terrain', 'Contenaire'] } },
       },
       then: {
+        properties: {
+          rooms: { const: null },
+          furniture: { const: [] },
+        },
         not:{
           required:["furnished"]
         }
       },
       else:{
-        required:["rooms"]
+        required:["rooms"],
+        if: {
+          properties: {
+            furnished: { const: false },
+          },
+        },
+        then: {
+          properties: {
+            furniture: { const: [] },
+          },
+        }
       }
-    }
+    },
   ],
   additionalProperties: false,
 } as const satisfies JSONSchema;

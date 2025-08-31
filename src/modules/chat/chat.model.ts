@@ -4,63 +4,74 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  Sequelize,
   ForeignKey,
   NonAttribute
 } from 'sequelize';
+import sequelize from '../../database/db'
 import Property from '../property/property.model';
 import ChatMessage from '../chatmessage/chatmessage.model';
+import User from '../user/user.model';
 
 class Chat extends Model<
-  InferAttributes<Chat,{ omit: 'messages'}>,
-  InferCreationAttributes<Chat,{ omit: 'messages'}>
+  InferAttributes<Chat,{ omit: 'seller' | 'buyer' | 'property' | 'messages'}>,
+  InferCreationAttributes<Chat,{ omit: 'seller' | 'buyer' | 'property' | 'messages'}>
 > {
   declare id: CreationOptional<string>;
-  declare title: string | null;
-  declare participants: string[];
-  declare isGroup: boolean;
+  declare buyerId: ForeignKey<User['id']> ;
+  declare sellerId: ForeignKey<User['id']> ;
   declare propertyId: ForeignKey<Property['id']> | null;
-
   // Déclaration des associations
+  declare seller: NonAttribute<User>;
+  declare buyer: NonAttribute<User>;
+  declare property: NonAttribute<Property>;
   declare messages: NonAttribute<ChatMessage[]>;
 
-  // Initialisation du modèle
-  static initialize(sequelize: Sequelize) {
-    this.init(
-      {
-        id: {
-          type: DataTypes.UUID,
-          defaultValue: DataTypes.UUIDV4,
-          primaryKey: true,
-        },
-        title: {
-          type: DataTypes.STRING,
-          allowNull: true, // Optionnel si ce n'est pas un groupe
-        },
-        participants: {
-          type: DataTypes.ARRAY(DataTypes.UUID),
-          allowNull: false, // Les participants sont obligatoires
-        },
-        isGroup: {
-          type: DataTypes.BOOLEAN,
-          defaultValue: false, // Par défaut, ce n'est pas un groupe
-          allowNull: false,
-        },
-        propertyId:{
-          type: DataTypes.UUID,
-          allowNull:true
-        }
-      },
-      {
-        sequelize,
-        tableName: 'chats',
-        timestamps: true, // Inclut createdAt et updatedAt
-      }
-    );
-  }
-  static associate(models: any) {
-    this.hasMany(models.ChatMessage, { foreignKey: 'chatId', as: 'messages' });
+  static associate(models: any){
+    this.belongsTo(models.User, { 
+      foreignKey: 'sellerId', 
+      as: 'seller' 
+    });
+    this.belongsTo(models.User, { 
+      foreignKey: 'buyerId', 
+      as: 'buyer' 
+    });
+    this.hasMany(models.ChatMessage, { 
+      foreignKey: 'chatId', 
+      as: 'messages' 
+    });
+    this.belongsTo(models.Property, { 
+      foreignKey: 'propertyId', 
+      as: 'property' 
+    });
   }
 }
+
+Chat.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    buyerId:{
+      type: DataTypes.UUID,
+      allowNull:false
+    },
+    sellerId:{
+      type: DataTypes.UUID,
+      allowNull:false
+    },
+    propertyId:{
+      type: DataTypes.UUID,
+      allowNull:true
+    },
+  },
+  {
+    sequelize,
+    tableName: 'chats',
+    timestamps: true, // Inclut createdAt et updatedAt
+  }
+);
+
 
 export default Chat;

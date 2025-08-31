@@ -22,11 +22,11 @@ export const createError = (status: number, message?: string, errors:object | an
 export const createSuccess = (status: number, message: string) => Response.json({success:true, message}, {status})
 
 export const generateColor = ()=>{
-    let profilePallete = [
-        "#3f6212", /**Vert */
-        "#3b82f6", /**Bleu */
-        "#ea580c", /**Orange */,
-        "#ef4444", /**Rouge */,
+    let profilePallete : string[] = [
+        "#3f6212",
+        "#3b82f6",
+        "#ea580c",
+        "#ef4444", 
         "#9333ea",
         "#ec4899"
     ]

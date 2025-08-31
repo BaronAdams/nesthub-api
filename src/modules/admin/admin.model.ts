@@ -4,10 +4,8 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  HasMany,
-  Sequelize,
 } from 'sequelize';
-import Post from '../post/post.model';
+import sequelize from '../../database/db'
 
 class Admin extends Model<
   InferAttributes<Admin>,
@@ -16,39 +14,37 @@ class Admin extends Model<
   declare id: CreationOptional<string>;
   declare email: string;
 
-  // Initialisation du modèle
-  static initialize(sequelize: Sequelize) {
-    this.init(
-      {
-        id: {
-          type: DataTypes.UUID,
-          defaultValue: DataTypes.UUIDV4,
-          primaryKey: true,
-        },
-        email: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          unique: true,
-          validate: {
-            isEmail: true,
-          },
-        }
-      },
-      {
-        sequelize,
-        tableName: 'admins',
-        timestamps: true, // Inclut createdAt et updatedAt
-      }
-    );
-  }
-
-  // Définition des associations
-  static associate(models: { Post: typeof Post }) {
+  static associate(models: any) {
+    // Définition des associations
     this.hasMany(models.Post, {
       foreignKey: 'adminId',
       as: 'posts',
     });
   }
 }
+
+// Initialisation du modèle
+Admin.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    }
+  },
+  {
+    sequelize,
+    tableName: 'admins',
+    timestamps: true, // Inclut createdAt et updatedAt
+  }
+);
 
 export default Admin;

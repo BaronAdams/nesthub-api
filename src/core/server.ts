@@ -8,7 +8,7 @@ import userRouter from '../modules/user/user.route'
 import propertyRouter from '../modules/property/property.route'
 import propertyReviewRouter from '../modules/propertyreview/properyreview.route'
 import upload from '../common/middlewares/multer'
-import { connect } from '../db/sql/connect';
+import { connect } from '../database/connect';
 
 const host = process.env.NODE_ENV == "production" ? process.env.HOSTNAME : 'localhost'
 const port = 7000
@@ -92,7 +92,7 @@ io.on("connection", (socket) => {
 
 
 // Fonction d'écoute de notre serveur API
-server.listen(port, host, () => {
+server.listen(port, host, async () => {
   connect()
   console.log(`Server is running on http://${host}:${port}`)
 })
